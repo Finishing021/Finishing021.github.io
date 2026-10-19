@@ -1,0 +1,183 @@
+/*
+ * 一屏一页。
+ *
+ * 网格用命名区域排布，是为一处响应式让步：宽屏时箭头在幻灯片左右两侧，
+ * 窄屏时幻灯片独占一行、箭头降到下面和页码并排 —— 否则手机上两个箭头
+ * 会把幻灯片挤掉近 90px 宽，而幻灯片上的字本来就小，挤不起。
+ * 用 grid-template-areas 改写位置，DOM 顺序和读屏顺序都不用动。
+ */
+.carousel {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas:
+    'prev slide next'
+    'meta meta  meta';
+  align-items: center;
+  justify-items: center;
+  column-gap: var(--sp-4);
+  row-gap: var(--sp-5);
+}
+
+/* ---- 幻灯片 ---- */
+
+.frame {
+  grid-area: slide;
+  /* 留下两侧呼吸空间，同时给箭头腾出位置 —— 幻灯片不铺满整幅 */
+  max-width: 1040px;
+  width: 100%;
+  margin: 0;
+  /* 8px 白边：和光影 / 成长档案的相框同一套观感，站内视觉不断层 */
+  padding: var(--sp-2);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  box-shadow: var(--glass-shadow);
+  animation: slide-in-next 420ms var(--ease-out-expo) both;
+}
+
+/* 新的一页从哪一侧滑进来 */
+.frame[data-dir='prev'] {
+  animation-name: slide-in-prev;
+}
+
+.slide {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  /* 加载前的淡蓝渐变骨架屏，拒绝纯白 */
+  background-color: #e8f1ff;
+  background-image: linear-gradient(135deg, #e3edff 0%, #f4f9ff 45%, #e3edff 100%);
+}
+
+/* 幻灯片可点时的按钮重置：视觉与纯 img 完全一致，只是多了手型光标 */
+.slideBtn {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: zoom-in;
+}
+
+.slideBtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+@keyframes slide-in-next {
+  from {
+    opacity: 0;
+    transform: translateX(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slide-in-prev {
+  from {
+    opacity: 0;
+    transform: translateX(-28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* ---- 左右箭头 ----
+   视觉（蓝渐变 + 立体边 + 投影）统一在 CarouselArrow.module.css，
+   全站轮播共用同一套，改一处全站统一。这里只负责网格定位。 */
+
+.prev {
+  grid-area: prev;
+}
+
+.next {
+  grid-area: next;
+}
+
+/* ---- 图注 + 页码 ---- */
+
+.meta {
+  grid-area: meta;
+  text-align: center;
+}
+
+.caption {
+  max-width: 68ch;
+  margin-inline: auto;
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+  /* 英文图注可能更长：居中限宽 + 均匀换行，绝不撑破轮播 */
+  text-wrap: balance;
+  overflow-wrap: break-word;
+  animation: caption-in 420ms var(--ease-out-expo) both;
+}
+
+@keyframes caption-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.counter {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 7px;
+  margin-top: var(--sp-2);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+  /* 等宽数字，01 -> 10 时不会左右抖 */
+  font-variant-numeric: tabular-nums;
+  color: var(--text-muted);
+}
+
+/* 当前页比总页数稍重一点，一眼看出「我在第几页」 */
+.counterNow {
+  font-size: 13px;
+  color: var(--text-primary);
+}
+
+.counterSep {
+  color: var(--line-strong);
+}
+
+.counterTotal {
+  color: var(--text-muted);
+}
+
+/* ---- 窄屏：幻灯片独占一行，箭头并到页码两侧 ---- */
+
+@media (max-width: 640px) {
+  .carousel {
+    grid-template-areas:
+      'slide slide slide'
+      'prev  meta  next';
+    column-gap: var(--sp-3);
+    row-gap: var(--sp-4);
+  }
+
+  .frame {
+    padding: 6px;
+    border-radius: 12px;
+  }
+}
+
+/* 关掉动效时不能只停掉 animation —— fill-mode: both 会把元素按 from 帧
+   钉在 opacity: 0 上，页面就白了。整条 animation 去掉即可。 */
+@media (prefers-reduced-motion: reduce) {
+  .frame,
+  .caption {
+    animation: none;
+  }
+}

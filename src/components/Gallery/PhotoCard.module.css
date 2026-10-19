@@ -1,0 +1,94 @@
+/*
+ * 网格里的一张照片。
+ *
+ * 白框参数与「关于我」的头像相框刻意保持一致 —— 同一套相纸语言：
+ * 16px 白边、外框圆角 24px、内缘圆角比外框小掉一个白边的量（同心圆角）、
+ * 以及 --shadow-photo。两处若各写各的，改天就会漂移成两种观感。
+ */
+.card {
+  display: block;
+  width: 100%;
+  /* 多列布局里绝不允许被切成两半，否则一张照片会横跨两列 */
+  break-inside: avoid;
+  margin-bottom: var(--sp-5);
+  text-align: left;
+  border-radius: 24px;
+  transition:
+    transform 420ms var(--ease-out-expo),
+    box-shadow 420ms var(--ease-out-expo);
+}
+
+.polaroid {
+  --mat: 8px;
+  --radius-outer: 24px;
+  /* 内缘圆角 = 外框圆角 − 白边宽度。圆角要同心，照片的角才不会顶进外框的角。 */
+  --radius-inner: calc(var(--radius-outer) - var(--mat));
+
+  display: block;
+  padding: var(--mat);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-outer);
+  box-shadow: var(--glass-shadow);
+  transition: box-shadow 420ms var(--ease-out-expo);
+}
+
+.image {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: var(--radius-inner);
+  /* 图片解码完成前是淡蓝渐变骨架屏，拒绝纯白洞 */
+  background-color: #e8f1ff;
+  background-image: linear-gradient(135deg, #e3edff 0%, #f4f9ff 45%, #e3edff 100%);
+}
+
+/* 照片正下方的文件名小字：12~14px、深藏青、拉开字间距，做出文艺感 */
+.caption {
+  display: block;
+  margin-top: var(--sp-2);
+  text-align: center;
+  font-family: var(--font-body);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--text-primary);
+}
+
+/* 只有真有悬停能力的设备才做浮起 —— 触屏上 hover 会粘住不散 */
+@media (hover: hover) {
+  .card:hover {
+    transform: translateY(-6px) scale(1.03);
+  }
+
+  /* 浮起必须同步加深阴影，否则看着像贴纸被平移了一下 */
+  .card:hover .polaroid {
+    box-shadow: var(--glass-shadow-lift);
+  }
+}
+
+/* 触屏没有 hover，改成按下时的轻微下沉 —— 有反馈，但不骗人 */
+@media (hover: none) {
+  .card:active {
+    transform: scale(0.985);
+  }
+}
+
+.card:focus-visible {
+  outline: 1px solid var(--accent);
+  outline-offset: 4px;
+}
+
+@media (max-width: 520px) {
+  .polaroid {
+    --mat: 6px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card,
+  .card:hover,
+  .card:active {
+    transform: none;
+  }
+}

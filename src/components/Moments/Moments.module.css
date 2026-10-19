@@ -1,0 +1,28 @@
+/* 空态：只在站主还没放照片时出现，所以文案是写给站主自己看的。 */
+
+.empty {
+  padding: var(--sp-7) 0 var(--sp-8);
+  border-top: 1px solid var(--line);
+}
+
+.emptyTitle {
+  font-family: var(--font-display-zh);
+  font-size: clamp(20px, 2.4vw, 26px);
+  color: var(--text-primary);
+}
+
+.emptyHint {
+  margin-top: var(--sp-3);
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--text-secondary);
+}
+
+.emptyHint code {
+  padding: 2px 7px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border-radius: 5px;
+}

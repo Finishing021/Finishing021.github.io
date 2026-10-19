@@ -1,0 +1,215 @@
+.nav {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50;
+  height: var(--nav-h);
+  border-bottom: 1px solid transparent;
+  transition:
+    background-color var(--dur-micro) linear,
+    border-color var(--dur-micro) linear,
+    backdrop-filter var(--dur-micro) linear;
+}
+
+.scrolled {
+  /* = --bg-base (#f2f7fa) 加透明度，滚过首屏后与页面底色衔接 */
+  background: rgba(242, 247, 250, 0.72);
+  backdrop-filter: blur(14px);
+  border-bottom-color: var(--line);
+}
+
+.inner {
+  max-width: var(--page-max);
+  height: 100%;
+  margin: 0 auto;
+  padding: 0 var(--page-pad);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-4);
+}
+
+.brand {
+  font-family: var(--font-display-latin);
+  font-size: 21px;
+  letter-spacing: 0.012em;
+  color: var(--text-primary);
+  /* 字标也是可点的链接，补出触控高度 */
+  padding: 10px 0;
+  /* 字标是衬线体，用 text-shadow 做柔光比描边更贴合 */
+  transition:
+    color var(--dur-micro) var(--ease-out-expo),
+    transform 320ms var(--ease-out-expo),
+    text-shadow 320ms var(--ease-out-expo);
+}
+
+.brand:hover {
+  color: var(--accent);
+  transform: scale(1.05);
+  text-shadow: 0 0 20px rgba(31, 109, 148, 0.34);
+}
+
+.links {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5);
+}
+
+/*
+ * 导航项改成 Uiverse 风格的「圆角方块按钮」：浅色底 + 浅蓝描边，
+ * 悬停 / 当前页填充主色、文字转白，图标从上方小幅滑入。
+ * 比原 demo 收敛：底色走浅蓝清透，hover 位移与滑入幅度都压小，保持精致内敛。
+ */
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  /* 触控区靠内边距撑到约 40px，又不至于太胖 */
+  padding: 8px 14px;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  color: var(--text-secondary);
+  background: var(--bg-surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  box-shadow: 0 2px 10px rgba(31, 109, 148, 0.08);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-micro) var(--ease-out-expo),
+    border-color var(--dur-micro) var(--ease-out-expo),
+    color var(--dur-micro) var(--ease-out-expo),
+    transform 280ms var(--ease-out-expo),
+    box-shadow 280ms var(--ease-out-expo);
+}
+
+.link:hover {
+  color: #ffffff;
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(31, 109, 148, 0.28);
+}
+
+/* 按下时轻微回缩，呼应 Uiverse 的 active 缩放 */
+.link:active {
+  transform: scale(0.94);
+  transition-duration: 120ms;
+}
+
+/* Uiverse 招牌动效：图标从上方滑入。收敛成 -14px + 淡入，避免太跳 */
+.link:hover .icon {
+  animation: slide-in-top 0.3s both;
+}
+
+.icon {
+  width: 16px;
+  height: 16px;
+  flex: none;
+}
+
+.icon circle,
+.icon path,
+.icon rect {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.label {
+  white-space: nowrap;
+}
+
+/* 当前所在页：常亮填充，不再靠下划线 */
+.linkActive,
+.linkActive:hover {
+  color: #ffffff;
+  background: var(--accent);
+  border-color: var(--accent);
+  transform: none;
+  box-shadow: 0 4px 14px rgba(31, 109, 148, 0.22);
+}
+
+@keyframes slide-in-top {
+  0% {
+    transform: translateY(-14px);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ---- 语言切换：心形滑动开关 ----
+   新版的心形开关样式独立放在 LangHeart.module.css（由 LangToggle 引入），
+   这里不再保留旧的「中 / EN」文字滑动开关样式。 */
+
+/* 英文导航项比中文长，中等宽度先收一档间距与内边距，避免挤在一起 */
+@media (max-width: 980px) {
+  .links {
+    gap: var(--sp-3);
+  }
+
+  .link {
+    padding: 8px 11px;
+    font-size: 13.5px;
+  }
+}
+
+/*
+ * 窄屏 / 平板竖屏：折叠成纯图标方块，文字用视觉隐藏（仍留在可访问树里）。
+ * 断点提到 820px 而不是 640px：英文导航词（Guestbook / Projects）比中文长，
+ * 641–790px 时文字版会把语言开关和音乐按钮挤出屏幕，折叠成图标才稳。
+ */
+@media (max-width: 820px) {
+  .links {
+    /* 手机上折叠成纯图标方块，文字用视觉隐藏（仍留在可访问树 / textContent 里） */
+    gap: 8px;
+  }
+
+  .link {
+    padding: 9px;
+    gap: 0;
+  }
+
+  .label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+    border: 0;
+  }
+
+  .icon {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 420px) {
+  .brand {
+    font-size: 16px;
+  }
+
+  .links {
+    gap: 6px;
+  }
+
+  .link {
+    padding: 8px;
+  }
+
+  .icon {
+    width: 16px;
+    height: 16px;
+  }
+}

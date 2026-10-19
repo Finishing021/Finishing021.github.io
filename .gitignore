@@ -1,0 +1,13 @@
+node_modules
+dist
+dist-perf
+dist-ssr
+*.local
+.DS_Store
+.vite
+coverage
+*.log
+
+# 部署用的临时压缩包（构建产物，不进仓库）
+finishing-netlify.zip
+dist_old_*

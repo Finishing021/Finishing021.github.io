@@ -1,0 +1,250 @@
+/* 「留言」整页。沿用全站清透冷灰蓝，排版走文艺极简：大留白、窄栏、细线输入框。 */
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-5);
+  width: 100%;
+}
+
+/* 外层：相对定位，给左上角的浮动标签留出空间 */
+.field {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sp-2);
+  /* 浮动标签会向上探出约 11px，这里留点余量，避免压到上一个字段 */
+  margin-top: var(--sp-3);
+}
+
+/* 浮动小标签 —— 改编自 brutalist 输入框的标签牌，收敛成浅蓝极简的小标签 */
+.tag {
+  position: absolute;
+  top: -11px;
+  left: 14px;
+  z-index: 2;
+  font-size: 11.5px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #ffffff;
+  background: var(--accent);
+  padding: 3px 10px;
+  border-radius: 7px;
+  transition: background-color var(--dur-micro) var(--ease-out-expo);
+}
+
+/* 输入框本体：利落一点的边 + 浅蓝偏移投影，呼应原 brutalist 的「贴纸」感，
+   但颜色全部走站点浅蓝，不抢戏（去掉了原版的 glitch 抖动 / 黑底等花哨部分） */
+.box {
+  width: 100%;
+  font: inherit;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--text-primary);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+  border: 2px solid var(--line-strong);
+  border-radius: var(--radius-md);
+  padding: var(--sp-4);
+  box-shadow: 4px 4px 0 var(--accent-soft);
+  transition:
+    border-color var(--dur-micro) var(--ease-out-expo),
+    box-shadow var(--dur-micro) var(--ease-out-expo);
+}
+
+.textarea {
+  min-height: 168px;
+  resize: vertical;
+}
+
+.box::placeholder {
+  color: var(--text-muted);
+  transition: color var(--dur-micro) var(--ease-out-expo);
+}
+
+/* 聚焦：描边转主蓝，偏移投影也加深一档，给一点轻微的「按下」反馈 */
+.box:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 4px 4px 0 var(--accent);
+}
+
+/* 聚焦时占位符淡出，避免和已输入内容重叠 */
+.box:focus::placeholder {
+  color: transparent;
+}
+
+/* 留言为空的报错态：描边转暖红，偏移投影也跟着染红，和全站错误色一致 */
+.box[aria-invalid='true'] {
+  border-color: #c0563b;
+  box-shadow: 4px 4px 0 rgba(192, 86, 59, 0.25);
+}
+
+/* 主行动按钮：实心强调色，与「关于我」的简历下载按钮同一造型，保证全站 CTA 一致 */
+.send {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 132px;
+  padding: var(--sp-3) var(--sp-5);
+  font-size: 15px;
+  letter-spacing: 0.08em;
+  color: #ffffff;
+  background: var(--accent);
+  border: 0;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 18px rgba(31, 109, 148, 0.26);
+  cursor: pointer;
+  transition:
+    transform 320ms var(--ease-out-expo),
+    background-color var(--dur-micro) var(--ease-out-expo),
+    box-shadow 320ms var(--ease-out-expo);
+}
+
+.send:hover {
+  transform: translateY(-2px);
+  background: #17587a;
+  box-shadow: 0 8px 26px rgba(31, 109, 148, 0.34);
+}
+
+.send:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* 表单下方文艺小字：斜体、弱化、不抢戏 */
+.hint {
+  margin-top: var(--sp-2);
+  font-size: 14px;
+  line-height: 1.8;
+  font-style: italic;
+  color: var(--text-muted);
+}
+
+.error {
+  font-size: 13px;
+  color: #c0563b;
+}
+
+.sent {
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.mailLink {
+  color: var(--accent);
+  text-decoration: none;
+  border-bottom: 1px solid var(--accent-soft);
+  transition: border-color var(--dur-micro) var(--ease-out-expo);
+}
+
+.mailLink:hover {
+  border-bottom-color: var(--accent);
+}
+
+@media (max-width: 520px) {
+  .send {
+    width: 100%;
+  }
+}
+
+/* ---- 响应式双栏布局 ----
+   移动端（< 1024px）默认上下排列，不出现横向滚动；
+   宽屏（>= 1025px）改为左表单 / 右装饰 6:4 双栏，整体在页面中居中。 */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--sp-7);
+  margin-top: var(--sp-7);
+  max-width: 1000px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.formCol {
+  min-width: 0;
+}
+
+.decorCol {
+  min-width: 0;
+}
+
+/* 右栏装饰卡：毛玻璃面板 + 极简信封插画 + 点睛文案，呼应全站清透文艺气质 */
+.decorInner {
+  position: relative;
+  height: 100%;
+  min-height: 340px;
+  padding: var(--sp-7) var(--sp-6);
+  border-radius: var(--radius-lg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--glass-shadow);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--sp-5);
+}
+
+/* 极淡的星点纹理，给装饰区一点「夜空/信纸」的呼吸感，不抢戏 */
+.decorInner::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 18% 26%, rgba(31, 109, 148, 0.32), transparent),
+    radial-gradient(1.5px 1.5px at 72% 18%, rgba(31, 109, 148, 0.24), transparent),
+    radial-gradient(1px 1px at 42% 68%, rgba(31, 109, 148, 0.3), transparent),
+    radial-gradient(1.5px 1.5px at 84% 62%, rgba(31, 109, 148, 0.2), transparent),
+    radial-gradient(1px 1px at 60% 86%, rgba(31, 109, 148, 0.24), transparent),
+    radial-gradient(1px 1px at 14% 82%, rgba(31, 109, 148, 0.2), transparent);
+  pointer-events: none;
+}
+
+.envelope {
+  width: 96px;
+  height: auto;
+  color: var(--accent);
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+.decorTitle {
+  position: relative;
+  margin: 0;
+  font-family: var(--font-display-zh);
+  font-size: clamp(28px, 4vw, 40px);
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: 0.1em;
+  color: var(--text-primary);
+}
+
+.decorLead {
+  position: relative;
+  margin: 0;
+  max-width: 22ch;
+  font-family: var(--font-display-zh);
+  font-size: clamp(15px, 1.6vw, 18px);
+  line-height: 1.9;
+  color: var(--text-secondary);
+}
+
+@media (min-width: 1025px) {
+  .layout {
+    grid-template-columns: 6fr 4fr;
+    align-items: stretch;
+    gap: var(--sp-8);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .envelope {
+    opacity: 0.85;
+  }
+}

@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Finishing</title>
+    <meta
+      name="description"
+      content="Finishing — 扬州大学车辆工程学生的成长档案：日记手稿、阶段记录与关于我。"
+    />
+
+    <!-- 首帧底色：取封面页的底色，避免 JS 起来之前闪一下别的颜色。
+         注意这不是全站底色（全站是 #f2f7fa），封面刻意保持暖白。 -->
+    <style>
+      html {
+        background: #f5f4f0;
+      }
+
+      /*
+       * 内联首屏骨架（性能优化：消除白屏）
+       *
+       * 为什么要内联在 HTML 里，而不是等 React 挂载后再画：
+       * 主 JS 包要先下载 → 解析 → 执行 → 才轮到 React 挂载，这段真空期
+       * （移动端弱网下可达一两秒）里 #root 是空的，用户看到的就是一片纯色底 ——
+       * 这正是「打开网站先白屏，然后内容从上到下刷出来」的根源。
+       *
+       * 这段 CSS 随 HTML 一起到达，浏览器第一帧就能画出保底内容，
+       * 视觉上是一张与封面同底色（--cover-base: #f5f4f0）的浅色占位。
+       *
+       * ⚠️ 刻意保持中性、极简：
+       *    1) 底色与封面完全一致，React 接管时不会有「闪一下别的颜色」；
+       *    2) 只用低对比度的呼吸点，不做任何设计元素 ——
+       *       它只在 JS 还没起来的几百毫秒里可见，绝不能盖过真实封面的视觉设计；
+       *    3) prefers-reduced-motion 下停止动画。
+       * React 一挂载就会把 #root 整个替换掉，这里随之消失，无需手动移除。
+       */
+      #boot {
+        position: fixed;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f5f4f0;
+      }
+
+      #boot-dot {
+        width: 34px;
+        height: 34px;
+        border-radius: 50%;
+        background: rgba(31, 109, 148, 0.16);
+        animation: bootPulse 1.4s ease-in-out infinite;
+      }
+
+      @keyframes bootPulse {
+        0%,
+        100% {
+          opacity: 0.35;
+          transform: scale(0.86);
+        }
+        50% {
+          opacity: 0.9;
+          transform: scale(1);
+        }
+      }
+
+      @media (prefers-reduced-motion: reduce) {
+        #boot-dot {
+          animation: none;
+          opacity: 0.6;
+        }
+      }
+
+      /*
+       * React 接管后由脚本移除：#root 里已有真实内容时，
+       * 骨架必须立刻消失，否则会盖住页面（它是 position: fixed）。
+       */
+      #boot[hidden] {
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="root"></div>
+    <div id="boot" aria-hidden="true"><div id="boot-dot"></div></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

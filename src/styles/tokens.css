@@ -1,0 +1,120 @@
+:root {
+  color-scheme: light;
+
+  /* ---- 颜色：清透冷灰蓝 ----
+     注意：封面页（Cover）刻意**不跟随**这套基调 —— 站主要求封面保持原样。
+     封面用到的颜色在 Cover.module.css 里以 --cover-* 局部声明，与这里解耦。
+     改这里的任何值都不会影响封面。 */
+  --bg-base: #f2f7fa;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f8fbfd;
+  --bg-tint: #e6eff6;
+
+  --line: #dbe6ee;
+  --line-strong: #b7cad9;
+
+  /* 正文用深藏青：内页铺了浅蓝天空背景，文字必须压得住（对比度优先）。
+     本轮再压深一档（二级文字 / 弱化文字都加深），避免亮天空/海面把字「吃」掉、发虚。 */
+  --text-primary: #0b1c30;
+  --text-secondary: #173a57;
+  --text-muted: #4d6580;
+
+  /* 毛玻璃卡片：内页内容悬浮在天空背景上的那层半透明白。
+     0.45 + 12px 模糊：背后的蓝天能透出来，卡片不再像一块纯白厚板。 */
+  --glass-bg: rgba(255, 255, 255, 0.45);
+  --glass-blur: 12px;
+  /* 卡片边框与阴影：极弱的半透明白细边 + 淡淡的深蓝投影，保持通透不压重 */
+  --glass-border: rgba(255, 255, 255, 0.55);
+  --glass-shadow: 0 8px 32px rgba(0, 50, 100, 0.08);
+  --glass-shadow-lift: 0 14px 44px rgba(0, 50, 100, 0.13);
+
+  /* 强调色分两档：
+     --accent 用于文字/链接/交互态，必须扛得住对比度（在 #f2f7fa 上是 5.4:1）；
+     --accent-soft 是真正的「淡天空蓝」，只用于细线、描边这类不需要对比度的装饰。 */
+  --accent: #1f6d94;
+  --accent-soft: #7fc0e0;
+  --accent-dim: rgba(31, 109, 148, 0.1);
+
+  --shadow-sm: 0 1px 2px rgba(28, 45, 66, 0.05), 0 2px 8px rgba(28, 45, 66, 0.05);
+  --shadow-md: 0 2px 4px rgba(28, 45, 66, 0.06), 0 12px 32px rgba(28, 45, 66, 0.1);
+
+  /* 相纸阴影：专门给「白框 + 照片」这类实体卡片用。
+     和 --shadow-md 的区别是**更散、更淡、没有明确的投影边界** ——
+     底色本身已经很浅（#f2f7fa），阴影一旦压重就会在浅底上糊出一块灰斑。
+     三层叠加：贴地的接触阴影交代「它落在页面上」，中层给体积，
+     最外层大范围低透明度制造空气感，凑起来是「托起来」而不是「压在下面」。 */
+  --shadow-photo:
+    0 1px 2px rgba(28, 45, 66, 0.04), 0 8px 24px rgba(28, 45, 66, 0.07),
+    0 24px 56px rgba(28, 45, 66, 0.06);
+
+  /* --shadow-photo 的悬停态：整体往外扩一圈、透明度也提一点。
+     卡片浮起时必须同步加深阴影，否则「浮起来」会显得像贴纸被平移了。 */
+  --shadow-photo-lift:
+    0 2px 4px rgba(28, 45, 66, 0.05), 0 14px 36px rgba(28, 45, 66, 0.11),
+    0 36px 72px rgba(28, 45, 66, 0.09);
+
+  /* ---- 封面专用：**不随全站基调变化**，改全站配色时不要动它 ----
+     只有这一条放在全局：html 上有 scrollbar-gutter: stable 恒定预留约 8px 滚动条槽位，
+     而那个槽位不属于页面的可绘制区域 —— 页面里任何元素都画不进去，只能靠根元素背景补色。
+     封面的其余颜色仍然局部声明在 Cover.module.css 里，两处互相独立。 */
+  --cover-base: #f5f4f0;
+
+  /* ---- 灯箱专用：同 --cover-base 的理由 ----
+     灯箱遮罩是 rgba(16,27,41,.92)，铺在 --bg-base 上合成后恰好是 #222d3a。
+     右侧那条滚动条槽位任何元素都盖不到，只能靠根元素背景补成这个合成色，
+     否则全屏遮罩的右边会露出一条 8px 浅缝。 */
+  --lightbox-base: #222d3a;
+
+  /* ---- 字体 ---- */
+  /* Cormorant Garamond 由 @fontsource 自托管打包，不走 Google Fonts，离线与国内均可用。
+     字形纤细、笔画对比强，适合大字号展示型标题。 */
+  --font-display-latin: "Cormorant Garamond", "Iowan Old Style", "Palatino Linotype",
+    Palatino, Georgia, "Songti SC", serif;
+  /* 中英统一的展示衬线栈：英文先走 Cormorant Garamond，中文回落到思源宋体。
+     这样同一处大标题在中英两种语言下都是「优雅衬线」，不会出现英文突然变无衬线、
+     或英文标题混用另一套字体的拼凑感。 */
+  --font-display: "Cormorant Garamond", "Source Han Serif SC", "Noto Serif SC",
+    "Iowan Old Style", "Palatino Linotype", Georgia, "Songti SC", "SimSun", serif;
+  /* 兼容历史命名：大量旧样式仍引用 --font-display-zh，统一指向同一套栈 */
+  --font-display-zh: var(--font-display);
+  /* 仿宋：比宋体更纤细秀气、带一点楷意，适合小字标签（如语言开关下的「中 / EN」）。
+     同样不加载中文 webfont。「思源仿宋」排在最前，本机若没装，依次回退到
+     Windows 自带的「仿宋」、Office / 华文系列的「华文仿宋」，最后才退回思源宋体，
+     保证任何机器上呈现的都是仿宋气质而不是普通宋体。 */
+  --font-fangsong-zh: "思源仿宋", "FangSong", "仿宋", "STFangsong", "华文仿宋",
+    "FangSong_GB2312", "仿宋_GB2312", "Source Han Serif SC", "Noto Serif SC", "Songti SC", serif;
+  /* 寄语 / 金句专用：一个栈同时覆盖中英 —— 英文先走衬线（Cormorant Garamond），
+     中文走思源宋体（Noto Serif SC），避免出现「中文宋体 + 英文默认无衬线」的割裂。
+     比 --font-body 更有文艺感，比 --font-display-zh 多了拉丁衬线。 */
+  --font-epigraph: "Cormorant Garamond", "Source Han Serif SC", "Noto Serif SC",
+    "Iowan Old Style", "Palatino Linotype", Georgia, "Songti SC", "SimSun", serif;
+
+  --font-body: -apple-system, BlinkMacSystemFont, "PingFang SC", "Hiragino Sans GB",
+    "Microsoft YaHei", "Segoe UI", Roboto, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  /* ---- 间距 / 圆角 ---- */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+  --sp-6: 40px;
+  --sp-7: 64px;
+  --sp-8: 96px;
+  --sp-9: 128px;
+  --radius-md: 8px;
+  --radius-lg: 14px;
+
+  /* ---- 缓动 / 时长 ---- */
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out-soft: cubic-bezier(0.65, 0, 0.35, 1);
+  --dur-micro: 180ms;
+  --dur-flip: 720ms;
+  --dur-enter: 900ms;
+
+  /* ---- 布局 ---- */
+  --page-max: 1180px;
+  --page-pad: clamp(20px, 5vw, 64px);
+  --nav-h: 64px;
+}

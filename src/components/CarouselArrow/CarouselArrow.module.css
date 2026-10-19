@@ -1,0 +1,169 @@
+/*
+ * 3D 立体切换按钮——把用户截图里的视觉逻辑（蓝渐变 + 立体边 + 圆角 + 投影）
+ * 用标准英文 CSS 重写，配色接到全站浅蓝基调（--accent 深蓝 + 更亮的同系蓝）。
+ * 不依赖任何第三方字体 / 库。
+ */
+
+.arrow3d {
+  -webkit-appearance: none;
+  appearance: none;
+  position: relative;
+  width: 54px;
+  height: 54px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 16px;
+  transition: transform 0.18s var(--ease-out-expo);
+  /* 移动端关键：去掉 300ms 点击延迟 + 禁止双击缩放，点箭头瞬间响应，
+   * 不会被浏览器当成「滚动/缩放手势」吞掉。 */
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+}
+
+.arrow3d:active:not(:disabled) {
+  transform: translateY(2px);
+}
+
+/* ---- 顶面：承载箭头，亮蓝渐变，轻微高光 + 内阴影 ---- */
+.top {
+  position: absolute;
+  z-index: 2;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  background-image: linear-gradient(145deg, #5bb0e0, #1f6d94);
+  border-radius: 16px;
+  text-shadow: 0 -1px rgba(0, 0, 0, 0.25);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.45),
+    inset 0 -2px 3px rgba(0, 0, 0, 0.18);
+  transition:
+    transform 0.18s var(--ease-out-expo),
+    background-image 0.4s;
+}
+
+.top svg {
+  width: 22px;
+  height: 22px;
+}
+
+.arrow3d:active:not(:disabled) .top {
+  background-image: linear-gradient(145deg, #1f6d94, #5bb0e0);
+}
+
+/* ---- 侧边：比顶面低 4px，露出一圈立体边 + 投影 ---- */
+.bottom {
+  position: absolute;
+  z-index: 1;
+  bottom: 4px;
+  left: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+  background-image: linear-gradient(145deg, #1f6d94, #5bb0e0);
+  border-radius: 16px;
+  box-shadow: 0 3px 5px rgba(0, 0, 0, 0.35);
+  transition:
+    bottom 0.18s var(--ease-out-expo),
+    height 0.18s var(--ease-out-expo);
+}
+
+.arrow3d:active:not(:disabled) .bottom {
+  bottom: 0;
+  height: calc(100% - 4px);
+}
+
+/* ---- 底板：最底层那块深色垫板，给整体一个落地的体积感 ---- */
+.base {
+  position: absolute;
+  z-index: 0;
+  top: 4px;
+  left: 0;
+  width: 100%;
+  height: calc(100% - 4px);
+  background-color: rgba(31, 109, 148, 0.16);
+  border-radius: 16px;
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.6),
+    inset 0 -2px 2px rgba(0, 0, 0, 0.12);
+  transition:
+    top 0.18s var(--ease-out-expo),
+    height 0.18s var(--ease-out-expo);
+}
+
+.arrow3d:active:not(:disabled) .base {
+  top: 6px;
+}
+
+/* ---- 到头了：压平成一块淡色板，明显不可点 ---- */
+.arrow3d:disabled {
+  cursor: default;
+  opacity: 0.5;
+}
+
+.arrow3d:disabled .top {
+  background-image: linear-gradient(145deg, #9ec3d6, #6f97ab);
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.arrow3d:disabled .bottom {
+  background-image: linear-gradient(145deg, #6f97ab, #9ec3d6);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.18);
+}
+
+.arrow3d:disabled .base {
+  background-color: rgba(120, 140, 155, 0.12);
+}
+
+/* 键盘焦点：保留可访问性轮廓 */
+.arrow3d:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+}
+
+/* 窄屏放大点击区域，手机上箭头更好按（用户反馈“点不动 / 很卡”） */
+@media (max-width: 768px) {
+  .arrow3d {
+    width: 62px;
+    height: 62px;
+    border-radius: 18px;
+  }
+
+  .top,
+  .bottom,
+  .base {
+    border-radius: 18px;
+  }
+
+  .top svg {
+    width: 27px;
+    height: 27px;
+  }
+}
+
+/* 更窄的屏再收一点，别抢幻灯片 */
+@media (max-width: 480px) {
+  .arrow3d {
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+  }
+
+  .top svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arrow3d,
+  .top,
+  .bottom,
+  .base {
+    transition: none;
+  }
+}

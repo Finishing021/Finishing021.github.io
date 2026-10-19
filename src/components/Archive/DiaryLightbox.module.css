@@ -1,0 +1,203 @@
+/*
+ * 手稿灯箱。
+ *
+ * ⚠️ 这里曾经堆满了 `!important`。那是误诊 —— 真正的问题是祖先带 transform 抢走了
+ * position: fixed 的包含块。根因已在组件层解决（portal 到 document.body），
+ * 详见 components/Gallery/PhotoLightbox.module.css 与 PhotoLightbox.tsx 的注释。
+ */
+
+.overlay {
+  position: fixed;
+  /*
+   * 用 100vw / 100vh 而不是 `inset: 0`：html 设了 `scrollbar-gutter: stable`，
+   * 槽位永远预留，而 inset: 0 的包含块不含它，右边会露 8px 浅色缝。
+   * 详见 components/Gallery/PhotoLightbox.module.css 的注释。
+   */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /* 10000 —— 比鼠标粒子画布（9999）高一级，打开灯箱时压住粒子，详见摄影灯箱的同名注释 */
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(16, 27, 41, 0.92);
+}
+
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: zoom-out;
+}
+
+/*
+ * ⚠️ 这里刻意**不写** position: relative。
+ *
+ * 缩放控制条（− / 1:1 / +）是 LightboxZoom 渲染在 .stage 里的绝对定位元素，
+ * 一旦 figure 变成定位元素，它的定位基准就从「整个灯箱」变成「figure 自己」，
+ * 控制条会掉到图注上面去。保持 static，控制条才会老老实实待在屏幕底部 ——
+ * 图注那边自己用 z-index 抬高（见下面的 .caption）。
+ */
+.figure {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-4);
+  margin: 0;
+  /* 里面的 .stage 是 100vw 宽，这里不能再限 90vw，否则图会被压扁 */
+  max-width: 100vw;
+}
+
+/*
+ * 缩放/平移的「视口」。
+ *
+ * 库要求这一层铺满才能算出平移边界（它默认 fit-content，那样放大后拖不动，
+ * 而且 overflow: hidden 会把放大后的图裁掉）。手稿灯箱的图片上方是标题、
+ * 下方还有图注，所以不能拿整屏当视口 —— 单独划出 82vh 高的一块给图片，
+ * 图注留在它外面。
+ */
+.stage {
+  width: 100vw;
+  height: 82vh;
+}
+
+/*
+ * 手稿默认必须整张可见 —— 原稿上的字常被裁掉一半就没法读了。
+ *
+ * 用 90vw / 82vh 而不是 100%：图片外面包着 .slideTrack（翻页动画）和缩放视口，
+ * 这两层高度都是贴内容的（不确定），百分比会被当成「不限制」而失效。
+ * 视口单位任何时候都解析得出来。图片占 82vh、图注再占几十像素，不会顶出屏幕。
+ */
+.image {
+  display: block;
+  max-width: 90vw;
+  max-height: 82vh;
+  object-fit: contain;
+  /* 透明底：图未解码时透出深色遮罩，而不是一块纯白（之前 #ffffff 会露出白色断层） */
+  background: transparent;
+  border-radius: 3px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+/*
+ * 翻页时的滑动入场：用 key={safeIndex} 强制重挂，配合方向类从左右滑入。
+ * 动画只动这一层的 transform，缩放/平移在更外层的 .react-transform-component 上，
+ * 两者互不干扰 —— 缩放状态也不会被翻页动画冲掉。
+ */
+.slideTrack {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation-duration: 260ms;
+  animation-timing-function: var(--ease-out-expo, ease);
+  animation-fill-mode: both;
+}
+
+.fromRight {
+  animation-name: diarySlideFromRight;
+}
+
+.fromLeft {
+  animation-name: diarySlideFromLeft;
+}
+
+@keyframes diarySlideFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes diarySlideFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .slideTrack {
+    animation: none;
+  }
+}
+
+/*
+ * 压在缩放层（z-index 2）之上，否则会被 100vw × 82vh 的缩放视口盖住。
+ * 遮罩是 1、翻页 5、关闭 6、缩放控制条 7 —— 这里给 4，正好在缩放层之上、
+ * 其它按钮之下。
+ */
+.caption {
+  position: relative;
+  z-index: 4;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sp-5);
+  font-size: 13px;
+  letter-spacing: 0.06em;
+  color: rgba(240, 247, 251, 0.82);
+}
+
+.captionTitle {
+  font-family: var(--font-display-zh);
+  font-size: 15px;
+  color: #ffffff;
+}
+
+.counter {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: rgba(240, 247, 251, 0.66);
+}
+
+/* 翻页（静态） */
+/* 翻页按钮的定位容器：3D 按钮本身在 CarouselArrow 里，这里只管摆位 */
+.navPrev {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: clamp(12px, 2.4vw, 40px);
+  z-index: 5;
+}
+
+.navNext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: clamp(12px, 2.4vw, 40px);
+  z-index: 5;
+}
+
+/* 关闭按钮已抽到共用的 components/Lightbox/LightboxCloseButton，
+   光影 / 作品集 / 成长档案 三处灯箱统一复用，避免样式漂移。 */
+
+/* 缩放控制条（− / 1:1 / +）已移到共用的 components/Lightbox/LightboxZoom.module.css */
+
+@media (max-width: 640px) {
+  .navPrev,
+  .navNext {
+    top: auto;
+    bottom: clamp(12px, 3vh, 28px);
+    transform: none;
+  }
+
+  .navPrev {
+    left: clamp(12px, 3vw, 28px);
+  }
+
+  .navNext {
+    right: clamp(12px, 3vw, 28px);
+  }
+}

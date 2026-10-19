@@ -1,0 +1,45 @@
+{
+  "name": "finishing",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build && node scripts/check-image-budget.mjs dist",
+    "build:perf": "tsc --noEmit && vite build --outDir dist-perf && node scripts/check-image-budget.mjs dist-perf",
+    "images:check": "node scripts/check-image-budget.mjs",
+    "preview": "vite preview",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "diary:build": "python scripts/optimize-images.py --format webp",
+    "diary:check": "node scripts/check-diary.mjs",
+    "photos:build": "python scripts/optimize-images.py assets-source/photos public/photos --max-edge 2000 --thumb --manifest src/content/photos.generated.ts --format webp",
+    "photos:check": "python scripts/test-optimize-images.py && node scripts/check-photos.mjs",
+    "photos:selftest": "python scripts/test-optimize-images.py",
+    "projects:export": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/export-pptx.ps1",
+    "projects:build": "python scripts/optimize-images.py assets-source/projects public/projects --max-edge 2560 --thumb --thumb-edge 720 --quality 84 --manifest src/content/projects.generated.ts --manifest-export projects --manifest-type Project --manifest-command \"npm run projects:build\" --manifest-order asc --no-date-warning --format webp",
+    "projects:all": "npm run projects:export && npm run projects:build",
+    "backdrop": "python scripts/make-hero-backdrop.py",
+    "shot": "node scripts/shoot.mjs"
+  },
+  "dependencies": {
+    "@fontsource/cormorant-garamond": "^5.3.0",
+    "framer-motion": "^12.43.0",
+    "gsap": "^3.15.0",
+    "react": "^19.3.0",
+    "react-dom": "^19.3.0"
+  },
+  "devDependencies": {
+    "@testing-library/jest-dom": "^7.0.1",
+    "@testing-library/react": "^16.3.3",
+    "@testing-library/user-event": "^14.6.7",
+    "@types/node": "^26.6.3",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-react": "^6.1.1",
+    "jsdom": "^30.1.1",
+    "typescript": "^7.0.2",
+    "vite": "^8.3.1",
+    "vitest": "^5.0.3"
+  }
+}

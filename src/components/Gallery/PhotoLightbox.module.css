@@ -1,0 +1,110 @@
+/*
+ * 全屏大图。
+ *
+ * ⚠️ 这里曾经堆满了 `!important`（position / inset / max-width / transform 全加），
+ * 因为「点开只有灰遮罩、图片看不见、页面还跳回顶部」。那是**误诊**：
+ * 真正的原因是**祖先带着 transform**，使 position: fixed 的包含块变成了那个祖先，
+ * 于是 inset: 0 撑成了整页高度、图被居中到屏幕外、关闭按钮的 focus() 又把页面滚回顶部。
+ *
+ * 根因已在组件层解决：灯箱用 portal 挂到 document.body，彻底离开带 transform 的
+ * div.main（详见 PhotoLightbox.tsx 顶部注释）。所以下面就是普通的干净 CSS，
+ * 一条 !important 都不需要 —— 留着它们只会让下一个读代码的人继续往错误的方向找。
+ */
+
+.overlay {
+  position: fixed;
+  /*
+   * 必须写 width: 100vw / height: 100vh，**不能**图省事写成 `inset: 0`。
+   *
+   * 因为 global.css 给 html 设了 `scrollbar-gutter: stable`：滚动条槽位永远
+   * 预留，而 `inset: 0` 的包含块是「可用区域」，不含这 8px 槽位。结果遮罩只有
+   * 1432 宽（视口 1440），右边会露一条浅色缝 —— 实测该处像素是页面底色
+   * (242,247,250)，而不是遮罩的深色。
+   *
+   * 100vw 算的是含槽位的整个窗口宽度，正好补上这条缝。
+   */
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  /*
+   * 10000 —— 比鼠标粒子画布（9999）高一级。
+   * 粒子画布是为了「在任何页面上都看得见」才抬到 9999 的，但灯箱是纯深色全屏层，
+   * 让粒子浮在它上面会穿帮，所以这里再抬一级把它压住。
+   */
+  z-index: 10000;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(16, 27, 41, 0.92);
+}
+
+/*
+ * 点黑色背景关闭。铺满整个遮罩层。
+ * 缩放层（LightboxZoom 的 wrapper）盖在它之上并接管了滚轮/拖拽，所以真正被点到的是
+ * 缩放层 —— 由它把「点空地」转发成关闭。这一层保留下来既是兜底，也维持了老 DOM 结构。
+ */
+.backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  cursor: zoom-out;
+}
+
+/*
+ * 大图：**默认必须整张可见**，一张都不能裁。
+ *
+ * 用 90vw / 90vh 而不是 100%：中间隔着「缩放视口」这一层，它的尺寸是贴着内容
+ * 的（fit-content），高度不确定 —— 百分比会被浏览器当成「不限制」，图片就按
+ * 原始尺寸铺开被裁掉。视口单位是相对屏幕的，任何时候都解析得出来。
+ * object-fit: contain 兜底，保证既不裁切也不变形。
+ */
+.image {
+  display: block;
+  max-width: 90vw;
+  max-height: 90vh;
+  object-fit: contain;
+  border-radius: 3px;
+  /* 透明底：灯箱在深色遮罩上，图未解码时透出深色而非刺眼的白，杜绝「白色断层」 */
+  background: transparent;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+}
+
+/* ---------- 翻页（静态，无过渡动画） ---------- */
+
+/* 翻页按钮的定位容器：3D 按钮本身在 CarouselArrow 里，这里只管摆位 */
+.navPrev {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: clamp(12px, 2.4vw, 40px);
+  z-index: 5;
+}
+
+.navNext {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  right: clamp(12px, 2.4vw, 40px);
+  z-index: 5;
+}
+
+/* 关闭按钮已抽到共用的 components/Lightbox/LightboxCloseButton，
+   光影 / 作品集 / 成长档案 三处灯箱统一复用，避免样式漂移。 */
+
+@media (max-width: 640px) {
+  .navPrev,
+  .navNext {
+    top: auto;
+    bottom: clamp(12px, 3vh, 28px);
+    transform: none;
+  }
+
+  .navPrev {
+    left: clamp(12px, 3vw, 28px);
+  }
+
+  .navNext {
+    right: clamp(12px, 3vw, 28px);
+  }
+}

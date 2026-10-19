@@ -1,0 +1,18 @@
+/*
+ * 全站鼠标粒子画布。
+ *
+ * position: fixed + 100vw/100vh 铺满视口；pointer-events: none 保证
+ * 图片、按钮、文字、灯箱的点击全部穿透，绝不会被这层挡住。
+ * z-index 9990：高于导航（50）与主内容（100），低于灯箱（10000），
+ * 所以正常页面看得到光斑，打开灯箱时光斑自动落到底下，不穿帮。
+ */
+.canvas {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: block;
+  pointer-events: none;
+  z-index: 9990;
+}

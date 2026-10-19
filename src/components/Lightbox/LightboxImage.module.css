@@ -1,0 +1,63 @@
+/*
+ * 灯箱大图的框体 + 图片（详见 LightboxImage.tsx 顶部注释）。
+ *
+ * 核心是 .frame：它锁死 aspect-ratio 并铺上与遮罩一致的深色底，
+ * 于是「图还没解码」的那段时间里，用户看到的只会是深色，不可能出现白色断层。
+ * 图片解码完成后（data-status="ready"）才淡入，避免自上而下逐行刷出的观感。
+ */
+
+.frame {
+  /*
+   * 尺寸上限与原 .image 完全一致（90vw / 90vh），视觉表现不变 ——
+   * 区别只是把「限制尺寸」从图片挪到了框体，框体本身不会因图未加载而塌成 0。
+   * 只在「没有宽高比数据」时才让框体跟着内容走，避免高度被锁成 0 而把图压没。
+   */
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 有 aspectRatio 时高度由比例决定；没有时至少给个下限，遮罩内不会全空 */
+  min-height: 40vh;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.image {
+  display: block;
+  max-width: 90vw;
+  max-height: 90vh;
+  /*
+   * contain 是硬要求：图与框体比例不一致时（如框体被 max-height 压矮），
+   * 图片按比例缩放居中，绝不裁切、绝不变形。
+   */
+  object-fit: contain;
+  border-radius: 3px;
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.5);
+
+  /*
+   * 未解码时完全透明 —— 此时看到的是 .frame 的遮罩色（深色），
+   * 而不是浏览器默认的图标占位或任何浅色。解码完成后淡入。
+   */
+  opacity: 0;
+  transition: opacity 220ms ease-out;
+}
+
+.frame[data-status='ready'] .image {
+  opacity: 1;
+}
+
+/*
+ * 加载失败：不再无限透明，直接呈现（哪怕破图也比空白可诊断），
+ * 但保留 object-fit 以免破图溢出框体。
+ */
+.frame[data-status='error'] .image {
+  opacity: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .image {
+    transition: none;
+  }
+}

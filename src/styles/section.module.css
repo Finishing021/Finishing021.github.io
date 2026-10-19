@@ -1,0 +1,74 @@
+.section {
+  position: relative;
+  /* 天空背景铺满视口，模块之间收紧一档（sp-8 -> sp-7），
+     内容更密，背景不会显得空旷 */
+  padding: var(--sp-7) var(--page-pad);
+}
+
+.inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+}
+
+.head {
+  margin-bottom: var(--sp-7);
+}
+
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.34em;
+  color: var(--accent);
+}
+
+.heading {
+  margin-top: var(--sp-3);
+  font-family: var(--font-display-zh);
+  font-size: clamp(26px, 3.4vw, 40px);
+  /* 字重提到 500：内页大标题在浅蓝天空背景下更扎实、不发虚（Cormorant 500 已自托管） */
+  font-weight: 500;
+  line-height: 1.42;
+  letter-spacing: 0.01em;
+  color: var(--text-primary);
+  /* 极淡白色发光：文字落在天空照片上时和背景拉开一点距离，更清晰（白卡上不可见，无损） */
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.6);
+}
+
+.lead {
+  margin-top: var(--sp-4);
+  max-width: 46ch;
+  font-size: 15px;
+  /* 字重提到 600：内页引子/说明文字（常用 --text-secondary，落在天空背景上）更锐利可读 */
+  font-weight: 600;
+  line-height: 1.9;
+  color: var(--text-secondary);
+  /* 同一套极淡白色发光，背景图片上时更清晰（白卡上不可见） */
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.55);
+}
+
+/* ---- 板块寄语 / 金句 ----
+   已抽成独立组件 `src/components/Epigraph/Epigraph.tsx`（自动按标点断句、
+   限宽居中、中英衬线体）。新增板块在页面末尾放一行即可：
+     <Epigraph text={t.epigraph} />          // 普通金句
+     <Epigraph text={t.epigraph} size="lg" /> // 需要更醒目的寄语（如诗词） */
+
+.more {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-7);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  border-bottom: 1px solid transparent;
+  padding-bottom: 2px;
+  transition: border-color var(--dur-micro) var(--ease-out-expo);
+}
+
+.more::after {
+  content: '\2192';
+  font-size: 13px;
+}
+
+.more:hover {
+  border-bottom-color: var(--accent-soft);
+}

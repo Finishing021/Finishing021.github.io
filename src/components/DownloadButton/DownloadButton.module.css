@@ -1,0 +1,135 @@
+/*
+ * 下载按钮（统一「关于我」的简历与「作品集」的 PPT）。
+ *
+ * 视觉取自一段 Uiverse 绿底下载按钮：左侧用 ::before(托盘) + ::after(三角) 拼出
+ * 一个下载箭头，悬停时三角循环下跳（downloadBounce）。这里把绿色换成站点浅蓝、
+ * 尺寸收小、箭头配色收敛，整体保持精致内敛，不抢内容。
+ *
+ * 关键行为在组件里：永远渲染 <a download href>，所以点击才会「另存为」而不是
+ * 在浏览器里打开 PDF。
+ */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  /* 左侧给箭头留位置 */
+  padding: 10px 20px 10px 40px;
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  text-decoration: none;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 16px rgba(31, 109, 148, 0.26);
+  cursor: pointer;
+  transition:
+    background-color var(--dur-micro) var(--ease-out-expo),
+    transform 280ms var(--ease-out-expo),
+    box-shadow 280ms var(--ease-out-expo);
+}
+
+.btn:hover {
+  background: #17587a;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(31, 109, 148, 0.34);
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* 下载箭头：::before 是托盘、::after 是三角，悬停时三角循环下跳 */
+.btn::before,
+.btn::after {
+  content: '';
+  position: absolute;
+  left: 16px;
+  top: 52%;
+}
+
+.btn::before {
+  width: 11px;
+  height: 2px;
+  margin-top: -1px;
+  border-style: solid;
+  border-width: 0 2px 2px;
+  border-color: #ffffff;
+}
+
+.btn::after {
+  width: 0;
+  height: 0;
+  margin-left: 3px;
+  margin-top: -7px;
+  border-style: solid;
+  border-width: 5px 5px 0 5px;
+  border-color: transparent;
+  border-top-color: #ffffff;
+  animation: downloadBounce 1.1s linear infinite;
+  /* 默认静止，悬停才动，避免一进页面就一直跳 */
+  animation-play-state: paused;
+}
+
+.btn:hover::before {
+  border-color: #cdeaf6;
+}
+
+.btn:hover::after {
+  border-top-color: #cdeaf6;
+  animation-play-state: running;
+}
+
+.label {
+  font-weight: 500;
+}
+
+/* 次要说明（PDF · N 页），用淡分隔点连在主文案后面 */
+.meta {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  opacity: 0.82;
+  padding-left: 10px;
+  border-left: 1px solid rgba(255, 255, 255, 0.35);
+}
+
+@keyframes downloadBounce {
+  0% {
+    margin-top: -7px;
+    opacity: 1;
+  }
+
+  0.001% {
+    margin-top: -15px;
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    margin-top: 0;
+    opacity: 0.4;
+  }
+}
+
+@media (max-width: 520px) {
+  .btn {
+    font-size: 13px;
+    padding: 9px 16px 9px 36px;
+    gap: 8px;
+  }
+
+  .btn::before {
+    left: 14px;
+  }
+
+  .meta {
+    padding-left: 8px;
+  }
+}

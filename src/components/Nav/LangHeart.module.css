@@ -1,0 +1,188 @@
+/* 语言开关：心形滑动开关（视觉源自 Uiverse，已收敛为站点浅蓝极简风）
+   结构 = 一枚真实复选框（透明、铺满热区）+ 关联的 <label> 心形。
+   复选框承载点击 / 键盘 / 读屏语义；:checked 驱动心形填色与小圆点滑动。 */
+
+.langGroup {
+  position: relative;
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  /* 比原来宽一点（24 → 28）：放大后的「EN」两个字母才不会顶到边缘 */
+  width: 28px;
+  /* 去掉固定高度，让「心形 + 下方小字」自然撑开，仍与旁边方形图标同高量级 */
+  line-height: 0;
+  /* 语言配色：中文柔和红，英文深蓝（#1c2d42） */
+  --heart-zh: #e57373;
+  --heart-en: #1c2d42;
+  --heart-fill-en: hsl(212deg 45% 86%);
+}
+
+/* 真实复选框：透明铺满 24×24 热区，承接点击与键盘焦点；视觉交给心形 */
+.switchInput {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 2;
+}
+
+/* 键盘聚焦时给心形一圈淡蓝柔光，替代默认描边 */
+.switchInput:focus-visible + .loveHeart {
+  filter: drop-shadow(0 0 3px rgba(31, 109, 148, 0.75));
+}
+
+/* left / right 是原始片段里未参与造型的占位节点，隐藏即可 */
+.left,
+.right {
+  display: none;
+}
+
+.loveHeart::before {
+  display: none;
+}
+
+/* 心形上瓣（本体 + ::after 两瓣圆弧），未选中时为淡蓝灰描边 */
+.loveHeart,
+.loveHeart::after {
+  border-color: var(--heart-zh);
+  border: 1px solid;
+  border-top-left-radius: 100px;
+  border-top-right-radius: 100px;
+  width: 10px;
+  height: 8px;
+  border-bottom: 0;
+}
+
+/* 那枚会滑动的小圆点 */
+.round {
+  position: absolute;
+  z-index: 1;
+  width: 8px;
+  height: 8px;
+  background: hsl(0deg 0% 100%);
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.18);
+  border-radius: 100%;
+  left: 0px;
+  bottom: -1px;
+  transition: all 0.5s ease;
+  animation: checkAnimation2 0.5s forwards;
+}
+
+.switchInput:checked + .loveHeart .round {
+  transform: translate(0px, 0px);
+  animation: checkAnimation 0.5s forwards;
+  background-color: hsl(0deg 0% 100%);
+}
+
+@keyframes checkAnimation {
+  0% {
+    transform: translate(0px, 0px);
+  }
+  50% {
+    transform: translate(0px, 7px);
+  }
+  100% {
+    transform: translate(7px, 7px);
+  }
+}
+
+@keyframes checkAnimation2 {
+  0% {
+    transform: translate(7px, 7px);
+  }
+  50% {
+    transform: translate(0px, 7px);
+  }
+  100% {
+    transform: translate(0px, 0px);
+  }
+}
+
+/* 心形本体：旋转成爱心，收成一小枚图标，去掉原 demo 的放大与位移 */
+.loveHeart {
+  box-sizing: border-box;
+  position: relative;
+  transform: rotate(-45deg) scale(1);
+  display: block;
+  border-color: var(--heart-zh);
+  cursor: pointer;
+  top: 0;
+  margin: 2px 0 0 2px;
+}
+
+/* 选中（英文档）：描边转站点主蓝，内填一层浅天蓝，仍是素净的浅蓝调 */
+.switchInput:checked + .loveHeart,
+.switchInput:checked + .loveHeart::after,
+.switchInput:checked + .loveHeart .bottom {
+  border-color: var(--heart-en);
+  box-shadow: inset 6px -5px 0px 2px var(--heart-fill-en);
+}
+
+.loveHeart::after,
+.loveHeart .bottom {
+  content: "";
+  display: block;
+  box-sizing: border-box;
+  position: absolute;
+  border-color: var(--heart-zh);
+}
+
+.loveHeart::after {
+  right: -9px;
+  transform: rotate(90deg);
+  top: 7px;
+}
+
+.loveHeart .bottom {
+  width: 11px;
+  height: 11px;
+  border-left: 1px solid;
+  border-bottom: 1px solid;
+  border-color: var(--heart-zh);
+  left: -1px;
+  top: 5px;
+  border-radius: 0px 0px 0px 5px;
+}
+
+/* 心形正下方的「中 / EN」小字：仿宋体、字距微开，颜色随语言切换。
+   字号从 11px 提到 13px —— 原来偏小，在浅蓝天空底上几乎看不清。 */
+.langLabel {
+  font-family: var(--font-fangsong-zh);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.18em;
+  /* 字距会在**最后一个字后面**也补一份空白，导致整行看起来比爱心偏左；
+     用等量的 text-indent 从行首补回来，文字才真正和爱心对齐居中。
+     （text-indent 只在块级元素上生效，所以下面要 display: block） */
+  text-indent: 0.18em;
+  display: block;
+  white-space: nowrap;
+  line-height: 1;
+  color: var(--heart-zh);
+  text-align: center;
+  user-select: none;
+  pointer-events: none;
+}
+
+.switchInput:checked ~ .langLabel {
+  color: var(--heart-en);
+}
+
+/* 切换成功的播报节点：只给读屏用，视觉上完全隐藏 */
+.langNotice {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

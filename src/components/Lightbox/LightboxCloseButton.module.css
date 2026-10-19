@@ -1,0 +1,53 @@
+/*
+ * 灯箱统一的关闭按钮（叉号）。
+ * 全局所有弹大图的灯箱共用这一份样式，详见 LightboxCloseButton.tsx。
+ */
+
+.close {
+  position: absolute;
+  top: clamp(14px, 2.6vh, 36px);
+  right: clamp(14px, 2.6vw, 44px);
+  z-index: 6;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  margin: 0;
+  cursor: pointer;
+  color: #ffffff;
+  background: rgba(16, 27, 41, 0.55);
+  border: 1px solid rgba(240, 247, 251, 0.45);
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  transition: background 200ms ease, border-color 200ms ease;
+}
+
+.closeIcon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+}
+
+.closeIcon svg {
+  width: 18px;
+  height: 18px;
+  fill: #ffffff;
+  transition: transform 200ms ease;
+}
+
+.close:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.close:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.close:active .closeIcon svg {
+  transform: scale(0.85);
+}

@@ -1,0 +1,46 @@
+/* 板块寄语 / 金句 —— 统一放在页面最下方，风格参考「关于我 / 成长档案」的描述文字，
+   但换成更有文艺感的衬线体，并做了电脑端限宽居中。 */
+
+.wrap {
+  /* 电脑端专属适配：绝不让文字横跨整个宽屏 —— 限宽 600–800px 并水平居中 */
+  max-width: 720px;
+  margin: var(--sp-7) auto 0;
+  /* 上方一条细线 + 留白，把寄语和上面的照片 / 作品 / 表单分开，像一枚书签 */
+  padding-top: var(--sp-6);
+  border-top: 1px solid var(--line);
+  text-align: center;
+  /* 中英合一的衬线栈：中文思源宋体，英文 Cormorant Garamond */
+  font-family: var(--font-epigraph);
+  font-size: 15px;
+  line-height: 1.8;
+  letter-spacing: 0.12em;
+  color: var(--text-secondary);
+}
+
+/* 一句话一行：短句各自独立成行，不与别的句子挤在一起 */
+.line {
+  display: block;
+}
+
+/* 更醒目的一句（留言板的诗词寄语）：字号提一档，字距再开一点 */
+.lg {
+  max-width: 640px;
+  font-size: clamp(18px, 2.4vw, 24px);
+  line-height: 1.8;
+  letter-spacing: 0.18em;
+}
+
+@media (max-width: 720px) {
+  .wrap {
+    /* 窄屏：占满可视宽度但左右留边，上下垂直排列的节奏不变 */
+    max-width: 100%;
+    margin-top: var(--sp-6);
+    padding-top: var(--sp-5);
+    font-size: 14.5px;
+  }
+
+  .lg {
+    max-width: 100%;
+    font-size: clamp(17px, 5.4vw, 21px);
+  }
+}

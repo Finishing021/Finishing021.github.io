@@ -1,0 +1,25 @@
+# Netlify 部署配置（缺陷四：静态资源强缓存 + SPA 深链回退）
+#
+# 说明：
+# - /assets/* 是 Vite 打包出的带 hash 文件名（内容不可变），可放心设为 1 年 immutable 强缓存，
+#   大幅减少手机端重复下载、缓解「图片一张张刷出来」的观感。
+# - /* → /index.html 的 200 回退让 /about、/moments、/projects、/guestbook 这类前端路由
+#   在静态托管（含拖拽上传 dist）下也能直接打开，不会 404 白屏。
+
+[build]
+  publish = "dist"
+  command = "npm run build"
+
+# Vite 8 / Rolldown 要求 Node ^20.19 或 >=22.12；固定到 22 避免 Netlify 默认版本偏低
+[build.environment]
+  NODE_VERSION = "22"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

@@ -1,0 +1,43 @@
+.timeline {
+  position: relative;
+}
+
+.year + .year {
+  margin-top: var(--sp-8);
+}
+
+.yearLabel {
+  margin-bottom: var(--sp-5);
+  padding-bottom: var(--sp-3);
+  font-family: var(--font-display-latin);
+  font-size: 20px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  /* 作为分组标题，用次级文字色而不是最弱的那档，否则太飘 */
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--line);
+}
+
+/*
+ * 网格：每张卡只占屏幕一小块。
+ * 180px 的下限让桌面端一行 5 张、平板 3 张，窄屏由下面的媒体查询接管。
+ */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: var(--sp-5);
+  align-items: stretch;
+}
+
+@media (max-width: 520px) {
+  /* 手机上固定两列：auto-fill 在这个宽度只会排出一列，卡片会变得很大 */
+  .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--sp-4);
+  }
+
+  .yearLabel {
+    font-size: 17px;
+  }
+}

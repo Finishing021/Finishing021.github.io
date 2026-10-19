@@ -1,0 +1,250 @@
+/*
+ * 封面自成一体的调色板。
+ *
+ * 全站基调改成冷灰蓝之后，封面**刻意保持原样**（站主明确要求不加任何蓝色遮罩或滤镜），
+ * 所以这里把封面用到的颜色在局部重新声明一遍，与 tokens.css 彻底解耦 ——
+ * 以后再动全站配色也不会波及封面。
+ *
+ * 下面这些值就是改版前封面实际在用的颜色，逐字保留。
+ */
+.cover {
+  /* --cover-base 定义在 tokens.css（根背景补色也要用它），其余封面颜色在这里局部声明 */
+  --cover-text: #14171a;
+  --cover-text-strong: rgba(20, 23, 26, 0.88);
+  --cover-text-soft: rgba(20, 23, 26, 0.74);
+  --cover-grid: rgba(255, 255, 255, 0.72);
+  --cover-frame: rgba(20, 23, 26, 0.16);
+  --cover-accent: #2e6b8a;
+
+  position: relative;
+  min-height: 100vh;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  padding: calc(var(--nav-h) + var(--sp-5)) var(--page-pad) var(--sp-7);
+  background: var(--cover-base);
+}
+
+/* ---------- 背景：头像轻微模糊，保留轮廓与内容 ---------- */
+
+.backdrop {
+  position: absolute;
+  /* 负 inset 的余量必须大于模糊的边缘衰减（约 3 倍模糊半径），
+     否则四边会露出被糊掉的透明羽化带 */
+  inset: -5%;
+  pointer-events: none;
+  will-change: transform;
+}
+
+.avatar {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 42%;
+  /* 关键是「轻微」：6px 让轮廓、五官、花朵都还看得清，
+     只把高频噪点压掉，给文字让出可读性 */
+  filter: blur(var(--cover-blur, 6px));
+}
+
+/*
+ * 遮罩：中心一圈柔和米白保证文字可读，四边渐隐融进页面底色。
+ * 刻意压得比较淡——头像本身色彩明度高，深色文字在其上对比度已有 9:1 以上，
+ * 真正需要解决的是「画面太花」，而不是对比度不足。
+ */
+.scrim {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      ellipse 72% 56% at 50% 50%,
+      rgba(250, 249, 246, 0.62),
+      rgba(250, 249, 246, 0) 78%
+    ),
+    linear-gradient(
+      to bottom,
+      rgba(245, 244, 240, 0.34) 0%,
+      rgba(245, 244, 240, 0) 26%,
+      rgba(245, 244, 240, 0) 66%,
+      rgba(245, 244, 240, 0.92) 97%
+    );
+}
+
+/* ---------- 极细白色网格 ---------- */
+
+.grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  will-change: transform;
+  background-image:
+    linear-gradient(to right, var(--cover-grid) 1px, transparent 1px),
+    linear-gradient(to bottom, var(--cover-grid) 1px, transparent 1px);
+  background-size: 16.666% 16.666%;
+  background-position: -1px -1px;
+}
+
+/* ---------- 取景框与四边刻度 ---------- */
+
+.frame {
+  position: absolute;
+  inset: clamp(16px, 3.4vh, 40px) clamp(20px, 4vw, 64px);
+  pointer-events: none;
+  will-change: transform;
+  border: 1px solid var(--cover-frame);
+}
+
+.frame span {
+  position: absolute;
+  background: var(--cover-frame);
+}
+
+.tickTop,
+.tickBottom {
+  left: 50%;
+  width: 1px;
+  height: 22px;
+  margin-left: -0.5px;
+}
+
+.tickTop {
+  top: -11px;
+}
+
+.tickBottom {
+  bottom: -11px;
+}
+
+.tickLeft,
+.tickRight {
+  top: 50%;
+  width: 22px;
+  height: 1px;
+  margin-top: -0.5px;
+}
+
+.tickLeft {
+  left: -11px;
+}
+
+.tickRight {
+  right: -11px;
+}
+
+/* ---------- 排版 ---------- */
+
+.content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  will-change: transform;
+}
+
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  text-indent: 0.3em;
+  color: var(--cover-text-soft);
+}
+
+.title {
+  margin-top: clamp(14px, 2.2vh, 28px);
+  font-family: var(--font-display-latin);
+  font-weight: 500;
+  /* 下限按 320px 视口反推：Cormorant 下 "Finishing" 约 3.6em 宽 + 字距 */
+  font-size: clamp(60px, 16vw, 230px);
+  line-height: 0.92;
+  letter-spacing: 0.04em;
+  text-indent: 0.04em;
+  color: var(--cover-text);
+  white-space: nowrap;
+}
+
+.footnote {
+  /* 标题的 g 有下伸部，会溢出 line-height: 0.92 的行盒，间距要给足 */
+  margin-top: clamp(20px, 2.8vh, 36px);
+  font-family: var(--font-display-zh);
+  font-size: 14px;
+  letter-spacing: 0.24em;
+  text-indent: 0.24em;
+  color: var(--cover-text-strong);
+}
+
+/* ---------- 进入按钮 ---------- */
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-3);
+  margin-top: clamp(34px, 5vh, 58px);
+  padding: 13px 32px;
+  color: var(--cover-text);
+  background: rgba(250, 249, 246, 0.46);
+  border: 1px solid rgba(20, 23, 26, 0.26);
+  border-radius: 999px;
+  backdrop-filter: blur(8px);
+  animation: ctaBreath 3.4s var(--ease-in-out-soft) infinite;
+  transition:
+    color var(--dur-micro) var(--ease-out-expo),
+    border-color var(--dur-micro) var(--ease-out-expo),
+    background-color var(--dur-micro) var(--ease-out-expo),
+    transform var(--dur-micro) var(--ease-out-expo);
+}
+
+.ctaLabel {
+  font-size: 12px;
+  letter-spacing: 0.3em;
+  text-indent: 0.3em;
+}
+
+.ctaArrow {
+  font-size: 13px;
+  transition: transform 320ms var(--ease-out-expo);
+}
+
+.cta:hover {
+  color: var(--cover-accent);
+  border-color: var(--cover-accent);
+  background: rgba(250, 249, 246, 0.86);
+  transform: translateY(-2px);
+}
+
+.cta:hover .ctaArrow {
+  transform: translateX(4px);
+}
+
+/* 关键帧终点没有光晕，减少动态效果冻结在终点时是干净状态 */
+@keyframes ctaBreath {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(46, 107, 138, 0.18);
+  }
+
+  50% {
+    box-shadow: 0 0 0 12px rgba(46, 107, 138, 0);
+  }
+}
+
+@media (max-width: 520px) {
+  .eyebrow {
+    /* 10px 在手机上太小了；11px 是这行装饰性小字的下限 */
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-indent: 0.18em;
+  }
+
+  .footnote {
+    font-size: 13px;
+    letter-spacing: 0.18em;
+    text-indent: 0.18em;
+  }
+
+  .cta {
+    padding: 12px 26px;
+  }
+}

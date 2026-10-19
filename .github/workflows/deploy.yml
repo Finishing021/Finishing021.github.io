@@ -1,0 +1,57 @@
+# 推送到 main 后自动构建并发布到 GitHub Pages
+#
+# 重要：仓库必须命名为 <你的GitHub用户名>.github.io，
+# 这样站点才会发布在 https://<用户名>.github.io/ 根路径下。
+# 本项目所有资源路径与前端路由都是按根路径写的，放在子路径（/仓库名/）会打不开。
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      - run: npm run build
+
+      # GitHub Pages 没有 SPA 重写规则：把 index.html 复制成 404.html，
+      # 这样直接访问 /about、/projects 等深链时也能加载前端路由。
+      - run: cp dist/index.html dist/404.html
+
+      - uses: actions/configure-pages@v5
+        with:
+          # 首次运行自动开启 Pages（若仓库设置里还没开）
+          enablement: true
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

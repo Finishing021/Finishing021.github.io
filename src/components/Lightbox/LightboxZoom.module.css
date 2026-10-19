@@ -1,0 +1,120 @@
+/*
+ * 灯箱缩放层（摄影灯箱与手稿灯箱共用）。手写实现，不依赖第三方库。
+ * 详见 LightboxZoom.tsx 顶部注释。
+ */
+
+/*
+ * 缩放视口：铺满整个灯箱，接滚轮 / 双击 / 点空地关闭 / 放大后拖拽平移，并把图片居中。
+ * overflow: hidden —— 放大并平移后超出视口的部分裁掉，平移边界已由 JS 夹在视口内，
+ * 所以既看得到全图又能拖动，且不会拖出画面留出空白。
+ * touch-action: none —— 关掉浏览器在上面的默认触摸手势（滚动 / 双指缩放），
+ * 让自定义拖拽平移独占触摸事件，移动端拖图不会误触发页面滚动。
+ */
+.stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  /* 遮罩 1、图注 4、翻页 5、关闭 6、缩放控件 7 */
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: zoom-out;
+  touch-action: none;
+}
+
+/* 真正被 scale 的那一层：尺寸贴着内容（图片），从中心放大 */
+.viewport {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/*
+ * 缩放控件（− / 1:1 / +）。
+ *
+ * 这是我们自己写的极简悬浮控件（缩放逻辑也是手写的，见 LightboxZoom.tsx），
+ * 所以样式完全可控。刻意做得克制：
+ *   - **放在右下角**，不压在图片正下方 —— 图片才是主角，控件不该抢视觉重心；
+ *   - 整体缩小到 26px 见方，底色压到 38% 透明度；
+ *   - 中间的「1:1」是比例指示器，字号 12px、透明度 60%，一眼能看到但绝不喧宾夺主。
+ */
+.zoomControls {
+  position: absolute;
+  right: clamp(14px, 2.6vw, 44px);
+  bottom: clamp(14px, 2.6vh, 32px);
+  /* 缩放层是 z-index 2，翻页 5、关闭 6，这里给 7 保证永远在它们之上可点 */
+  z-index: 7;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  background: rgba(16, 27, 41, 0.38);
+  border: 1px solid rgba(240, 247, 251, 0.22);
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+}
+
+.zoomBtn,
+.zoomResetBtn {
+  display: grid;
+  place-items: center;
+  height: 26px;
+  line-height: 1;
+  color: rgba(255, 255, 255, 0.75);
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: color 160ms ease, background 160ms ease;
+}
+
+.zoomBtn {
+  width: 26px;
+  font-size: 14px;
+}
+
+/*
+ * 比例指示器：既是「复位到原尺寸」的按钮，也是当前倍率的说明。
+ * 字号 12px + 60% 透明度 —— 嵌在胶囊里安静地待着，别抢图片的风头。
+ */
+.zoomResetBtn {
+  padding: 0 7px;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.zoomBtn:hover:not(:disabled),
+.zoomResetBtn:hover {
+  color: #ffffff;
+  background: rgba(240, 247, 251, 0.16);
+}
+
+.zoomBtn:focus-visible,
+.zoomResetBtn:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.zoomBtn:disabled {
+  opacity: 0.28;
+  cursor: default;
+}
+
+/*
+ * 窄屏：翻页箭头会落到左下 / 右下角，继续待在右下角会撞车。
+ * 挪到左上角（关闭按钮在右上，那里是空的），一样不挡图。
+ */
+@media (max-width: 640px) {
+  .zoomControls {
+    right: auto;
+    left: clamp(12px, 3vw, 28px);
+    bottom: auto;
+    top: clamp(12px, 2.4vh, 24px);
+  }
+}

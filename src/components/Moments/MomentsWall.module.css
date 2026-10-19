@@ -1,0 +1,89 @@
+/*
+ * 用 CSS 多列布局做网格，不用 JS 计算位置。
+ *
+ * 为什么是列布局而不是等高方格：照片保留各自的原图比例，高度天然参差，
+ * 这正是拍立得墙该有的样子。等高格子必须裁图，而每张照片的构图都值得完整保留。
+ *
+ * 阅读顺序会不会乱？不会 —— 因为墙上**没有任何文字**，视觉阅读顺序不可见。
+ * DOM 顺序仍然是严格的时间倒序，读屏用户拿到的就是时间线；
+ * 多列的视觉流动只是排布方式，Pinterest 式浏览对图片墙是自然预期。
+ *
+ * column-width 决定「窄到多少就减一列」，column-count 只是上限
+ * （大屏上再宽也不超过 4 列，否则每列会窄到看不清）。
+ */
+/* ---- 分类筛选：分段控件（segmented control）----
+   一条浅蓝清透的「轨道」托着一排小标签，选中态填充站点蓝 ——
+   和 3D 切换按钮的蓝同源，全站视觉不断层。视觉取自用户发来的 cir-tabs 设计，
+   但配色 / 字体接到本站 design token，未引入 Inter 等外部字体。 */
+.filters {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  margin-bottom: var(--sp-6);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 999px;
+  box-shadow: var(--glass-shadow);
+}
+
+.pill {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 36px;
+  padding: 0 18px;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text-secondary);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 220ms var(--ease-out-expo),
+    color 220ms var(--ease-out-expo),
+    box-shadow 220ms var(--ease-out-expo);
+}
+
+.pill:hover {
+  color: var(--text-primary);
+  background: var(--accent-dim);
+}
+
+.pillActive {
+  color: #fff;
+  background: var(--accent);
+  box-shadow:
+    0 1px 1px rgba(28, 45, 66, 0.06),
+    0 6px 14px -8px rgba(28, 45, 66, 0.45);
+}
+
+.pill:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.wall {
+  column-width: 240px;
+  column-count: 4;
+  column-gap: var(--sp-5);
+}
+
+@media (max-width: 860px) {
+  .wall {
+    column-count: 3;
+  }
+}
+
+@media (max-width: 520px) {
+  .wall {
+    column-count: 2;
+    column-gap: var(--sp-4);
+  }
+}

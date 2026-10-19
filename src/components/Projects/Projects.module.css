@@ -1,0 +1,201 @@
+/* ---- 模块内的下载按钮 ----
+   贴在轮播正下方，容器与图片（白框）同宽并居中，视觉上和上面的图合为一体，
+   而不是被挤到页面顶部。视觉本体在 src/components/DownloadButton。 */
+.moduleActions {
+  margin-top: var(--sp-4);
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 1040px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ---- 页头：主标题 + 副标题 ----
+   仅作品集页使用。section.module.css 里的通用 .head / .heading 保持原样，
+   因此关于我、光影、留言板的页头不会跟着变。 */
+
+.head {
+  margin-bottom: var(--sp-5);
+}
+
+.heading {
+  margin-top: var(--sp-2);
+  font-family: var(--font-display-zh);
+  font-size: clamp(26px, 3.4vw, 40px);
+  font-weight: 500;
+  /* 行高比通用页头略收，标题不占多余高度；字距拉开，中文衬线更舒展 */
+  line-height: 1.32;
+  letter-spacing: 0.08em;
+  color: var(--text-primary);
+  text-shadow: 0 1px 3px rgba(255, 255, 255, 0.6);
+}
+
+.subtitle {
+  margin-top: var(--sp-3);
+  max-width: 600px;
+  font-family: var(--font-display);
+  font-size: clamp(13px, 1.15vw, 15px);
+  font-weight: 400;
+  line-height: 1.9;
+  /* 与标题同一套字距，形成呼吸感 */
+  letter-spacing: 0.08em;
+  /* 稍微透明的深藏青：比主标题轻一档，落在天空背景上仍清晰可读 */
+  color: rgba(23, 58, 87, 0.78);
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.55);
+  /* 英文副标题更长时均匀换行，不留孤词、不撑破页面 */
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+/* ---- 模块化区块 ----
+   页面由 projectModules 数组驱动，每个模块 = 标题 + 引言 + 内容体。
+   模块之间用一条两端渐隐的细线分隔，不再是一条横贯整行的硬线；
+   第一个模块紧接页头，不带分隔线、不留额外上间距，避免中间空出一大块。 */
+
+.module {
+  position: relative;
+  margin-top: var(--sp-6);
+  padding-top: var(--sp-6);
+  border-top: none;
+}
+
+.module::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(23, 58, 87, 0.16) 20%,
+    rgba(23, 58, 87, 0.16) 80%,
+    transparent 100%
+  );
+}
+
+/* 第一个模块：去掉分隔线与上间距，让「PPT 案例」往上提 */
+.moduleFirst {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+.moduleFirst::before {
+  display: none;
+}
+
+.moduleTitle {
+  font-family: var(--font-display-zh);
+  font-size: clamp(20px, 2.4vw, 26px);
+  font-weight: 400;
+  letter-spacing: 0.01em;
+  color: var(--text-primary);
+}
+
+.moduleLead {
+  margin-top: var(--sp-2);
+  font-size: 14px;
+  line-height: 1.8;
+  color: var(--text-secondary);
+}
+
+.moduleBody {
+  margin-top: var(--sp-5);
+}
+
+/* ---- 画廊型模块（证书等）----
+   白色相框卡片网格：观感与轮播 frame、光影 / 成长档案同一套
+   （白底 + 细描边 + 轻投影），auto-fit 自适应列数，
+   加新图自动排进来，宽屏一行多张、窄屏折行，不留大片空白。 */
+
+.galleryGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
+  gap: var(--sp-5);
+}
+
+.galleryCard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sp-2);
+  padding: var(--sp-2);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  box-shadow: var(--glass-shadow);
+  cursor: zoom-in;
+  transition:
+    transform 320ms var(--ease-out-expo),
+    box-shadow 320ms var(--ease-out-expo);
+}
+
+.galleryCard:hover {
+  transform: translateY(-3px);
+  box-shadow: var(--glass-shadow-lift);
+}
+
+.galleryCard:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.galleryImage {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 6px;
+  object-fit: contain;
+  /* 加载前的淡蓝渐变骨架屏，拒绝纯白 */
+  background-color: #e8f1ff;
+  background-image: linear-gradient(135deg, #e3edff 0%, #f4f9ff 45%, #e3edff 100%);
+}
+
+.galleryCaption {
+  font-size: 12.5px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+  text-wrap: balance;
+  overflow-wrap: break-word;
+}
+
+/* ---- 空态 ----
+   只有站主忘了跑命令时才会出现，所以文案是写给站主自己看的。
+   样式与光影空态保持一致。 */
+
+.empty {
+  padding: var(--sp-7) 0 var(--sp-8);
+  border-top: 1px solid var(--line);
+}
+
+.emptyTitle {
+  font-family: var(--font-display-zh);
+  font-size: clamp(20px, 2.4vw, 26px);
+  color: var(--text-primary);
+}
+
+.emptyHint {
+  margin-top: var(--sp-3);
+  font-size: 14px;
+  line-height: 1.9;
+  color: var(--text-secondary);
+}
+
+.emptyHint code {
+  padding: 2px 7px;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--accent);
+  background: var(--accent-dim);
+  border-radius: 5px;
+}
+
+@media (max-width: 520px) {
+  .download {
+    font-size: 13px;
+    padding: 9px 15px;
+  }
+}

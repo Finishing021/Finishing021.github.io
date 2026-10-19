@@ -1,0 +1,54 @@
+.footer {
+  padding: var(--sp-7) var(--page-pad) var(--sp-6);
+  border-top: 1px solid var(--line);
+}
+
+.inner {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--sp-4);
+  max-width: var(--page-max);
+  margin: 0 auto;
+}
+
+.line {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-3);
+}
+
+.brand {
+  font-family: var(--font-display-latin);
+  font-size: 18px;
+  color: var(--text-primary);
+}
+
+.sep {
+  color: var(--text-muted);
+}
+
+.note {
+  font-family: var(--font-display-zh);
+  font-size: 14px;
+  letter-spacing: 0.08em;
+  color: var(--text-secondary);
+}
+
+.meta {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-5);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--text-muted);
+}
+
+.top {
+  transition: color var(--dur-micro) var(--ease-out-expo);
+}
+
+.top:hover {
+  color: var(--accent);
+}

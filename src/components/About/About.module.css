@@ -1,0 +1,336 @@
+/* 「关于我」独立整页。整页只有这一件事要讲，所以排版刻意铺开：
+   大留白 + 大字号，不再挤在首页的一个区块里。 */
+.page {
+  padding: calc(var(--nav-h) + var(--sp-7)) var(--page-pad) var(--sp-7);
+}
+
+.inner {
+  max-width: var(--page-max);
+  margin: 0 auto;
+}
+
+/* 语言切换时靠 key 重新挂载，这里给一次进场动画 —— 让用户明确看到「切了」 */
+.switchable {
+  animation: langSwitchIn 420ms var(--ease-out-expo) both;
+}
+
+@keyframes langSwitchIn {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* ---- 页头 ---- */
+.hero {
+  max-width: 60ch;
+}
+
+.eyebrow {
+  font-size: 12px;
+  letter-spacing: 0.34em;
+  color: var(--accent);
+}
+
+.title {
+  margin-top: var(--sp-3);
+  font-family: var(--font-display-zh);
+  font-size: clamp(40px, 7vw, 76px);
+  font-weight: 400;
+  line-height: 1.14;
+  letter-spacing: 0.01em;
+  color: var(--text-primary);
+}
+
+.lead {
+  margin-top: var(--sp-4);
+  font-size: clamp(16px, 1.5vw, 19px);
+  line-height: 1.7;
+  color: var(--text-secondary);
+  /* 引子只有一句话，桌面端保持单行 —— 否则末尾一两个字会掉到第二行 */
+  white-space: nowrap;
+}
+
+/* ---- 头像 + 正文 ---- */
+.layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.78fr) minmax(0, 1.22fr);
+  gap: var(--sp-7);
+  align-items: start;
+  margin-top: var(--sp-7);
+}
+
+/*
+ * 头像：拍立得式白色相框。
+ *
+ * 头像本身是一块高饱和的天蓝，直接平贴在极浅的冷灰蓝页面底上时，
+ * 没有任何过渡带 —— 它读起来就是「一坨浮着的蓝色方块」，和底色互相打架。
+ * 套一圈白纸再给一层柔影，等于给了它「相纸」的物理身份：
+ * 白色把饱和色和底色隔开，阴影交代它落在页面上而不是贴在上面。
+ */
+.portrait {
+  /* 白边宽度 */
+  --mat: var(--sp-4);
+  --radius-outer: 24px;
+  /* 内缘圆角 = 外框圆角 − 白边宽度。
+     圆角要「同心」，照片的圆角就必须比外框小掉一个白边的量，
+     否则照片的角会顶进外框的角里，看起来像两个没对齐的方块摞在一起。 */
+  --radius-inner: calc(var(--radius-outer) - var(--mat));
+
+  padding: var(--mat);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-outer);
+  box-shadow: var(--glass-shadow);
+}
+
+.portrait img {
+  width: 100%;
+  /* 成品头像本身就是方的（864px），这里只是兜住比例 */
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radius-inner);
+}
+
+/* 正文列：套一层毛玻璃卡片，让成长自述浮在「天空玻璃」上，
+   彻底解决亮背景上的看字吃力问题（与全站玻璃卡同一套质感） */
+.text {
+  padding: var(--sp-5);
+  background: var(--glass-bg);
+  backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--glass-shadow);
+}
+
+.bio {
+  max-width: 48ch;
+  font-size: 17px;
+  line-height: 1.9;
+  color: var(--text-secondary);
+  /* 中文尽量避免在词中折断，也不让末行只剩一两个字 */
+  line-break: strict;
+  text-wrap: pretty;
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: var(--sp-5);
+  margin-top: var(--sp-6);
+  padding-top: var(--sp-5);
+  border-top: 1px solid var(--line);
+}
+
+.fact dt {
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--text-muted);
+}
+
+.fact dd {
+  margin-top: var(--sp-2);
+  font-family: var(--font-display-zh);
+  font-size: clamp(18px, 2vw, 22px);
+  line-height: 1.45;
+  color: var(--text-primary);
+}
+
+/* 英文的学校 / 专业名比中文长：字号降一档，避免在窄列里被逐词拆成两行 */
+:global(html[lang='en']) .fact dd {
+  font-size: clamp(17px, 1.7vw, 20px);
+}
+
+/* ---- 联系方式 ---- */
+.contactBlock {
+  margin-top: var(--sp-7);
+  padding-top: var(--sp-6);
+  border-top: 1px solid var(--line);
+}
+
+.contactTitle {
+  font-size: 12px;
+  font-weight: 400;
+  letter-spacing: 0.3em;
+  color: var(--text-muted);
+}
+
+.contactList {
+  margin-top: var(--sp-4);
+  border-top: 1px solid var(--line);
+}
+
+.contactItem {
+  border-bottom: 1px solid var(--line);
+}
+
+.contactButton {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: var(--sp-5);
+  width: 100%;
+  /* 悬停时要铺底色，用负外边距把内边距抵消掉，文字不会跳位 */
+  padding: var(--sp-5) var(--sp-4);
+  margin: 0 calc(var(--sp-4) * -1);
+  text-align: left;
+  border-radius: var(--radius-md);
+  transition: background-color var(--dur-micro) var(--ease-out-expo);
+}
+
+.contactButton:hover {
+  background: var(--bg-elevated);
+}
+
+.contactLabel {
+  font-size: 13px;
+  letter-spacing: 0.16em;
+  color: var(--text-secondary);
+}
+
+.contactValue {
+  font-family: var(--font-mono);
+  font-size: clamp(15px, 1.7vw, 19px);
+  /* 加粗：微信号 / 邮箱是要被复制的对象，必须一眼锁定，别和标签混在一起 */
+  font-weight: 600;
+  color: var(--text-primary);
+  word-break: break-all;
+  transition: color var(--dur-micro) var(--ease-out-expo);
+}
+
+.contactHint,
+.contactHintFailed {
+  font-size: 12px;
+  white-space: nowrap;
+  transition: color var(--dur-micro) var(--ease-out-expo);
+}
+
+.contactHint {
+  color: var(--text-muted);
+}
+
+.contactHintFailed {
+  color: var(--text-primary);
+}
+
+/* 降级提示（自动复制失败、已帮访客选中文本）：用主色 + 加粗，把视线引到下一步操作 */
+.contactHintSelected {
+  font-size: 12px;
+  white-space: nowrap;
+  font-weight: 600;
+  color: var(--accent);
+  transition: color var(--dur-micro) var(--ease-out-expo);
+}
+
+.contactButton:hover .contactValue,
+.contactButton:hover .contactHint {
+  color: var(--accent);
+}
+
+/* ---- 简历 ----
+   注意：简历按钮的视觉已统一到 src/components/DownloadButton，
+   这里 .resume / .resumeMeta 仅供回退时参考，现已不被 JSX 引用。 */
+.resumeRow {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-4);
+  margin-top: var(--sp-6);
+  flex-wrap: wrap;
+}
+
+.resume {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-6);
+  min-width: 260px;
+  padding: var(--sp-4) var(--sp-5);
+  font-size: 16px;
+  letter-spacing: 0.04em;
+  color: #ffffff;
+  text-decoration: none;
+  background: var(--accent);
+  border-radius: var(--radius-md);
+  box-shadow: 0 4px 18px rgba(31, 109, 148, 0.28);
+  transition:
+    transform 320ms var(--ease-out-expo),
+    box-shadow 320ms var(--ease-out-expo),
+    background-color var(--dur-micro) var(--ease-out-expo);
+}
+
+.resume:hover {
+  transform: translateY(-2px);
+  background: #17587a;
+  box-shadow: 0 8px 26px rgba(31, 109, 148, 0.36);
+}
+
+.resumeMeta {
+  font-size: 12px;
+  letter-spacing: 0.12em;
+  opacity: 0.78;
+}
+
+/* ---- 回档案 ---- */
+.back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin-top: var(--sp-7);
+  font-size: 14px;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+  padding-bottom: 2px;
+  border-bottom: 1px solid transparent;
+  transition: border-color var(--dur-micro) var(--ease-out-expo);
+}
+
+.back:hover {
+  border-bottom-color: var(--accent-soft);
+}
+
+@media (max-width: 860px) {
+  .page {
+    padding-top: calc(var(--nav-h) + var(--sp-6));
+  }
+
+  /* 窄屏放不下整句，交回自动换行 */
+  .lead {
+    white-space: normal;
+  }
+
+  .layout {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-6);
+  }
+
+  .portrait {
+    max-width: 300px;
+  }
+
+  .bio {
+    font-size: 16px;
+  }
+}
+
+@media (max-width: 520px) {
+  .contactButton {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--sp-1);
+  }
+
+  /* 降级提示较长（「已为您选中，请按 Ctrl+C 复制」），窄屏允许换行 */
+  .contactHint,
+  .contactHintFailed,
+  .contactHintSelected {
+    white-space: normal;
+  }
+
+  .resume {
+    width: 100%;
+  }
+}

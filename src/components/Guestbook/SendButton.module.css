@@ -1,0 +1,353 @@
+/* 留言板「发送」按钮 —— 改编自 Uiverse 的 Send Message 按钮。
+   不引入 styled-components，纯 CSS Module；粉红主色改为站点浅蓝（--accent），
+   其余视觉效果（纸飞机图标、悬停字母波动、聚焦时飞机起飞 + Sent）原样保留。
+   按钮本体是浅色渐变胶囊 + 渐变描边，hover 时一圈淡白描边旋转，整体克制、贴合浅蓝极简风。 */
+
+.button {
+  --primary: var(--accent);
+  --neutral-1: #f7f8f7;
+  --neutral-2: #e7e7e7;
+  --radius: 14px;
+
+  cursor: pointer;
+  border-radius: var(--radius);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.18);
+  border: none;
+  color: #243a45;
+  box-shadow:
+    0 0.5px 0.5px 1px rgba(255, 255, 255, 0.5),
+    0 10px 20px rgba(31, 109, 148, 0.16),
+    0 4px 5px 0 rgba(0, 0, 0, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  transition: all 0.3s ease;
+  min-width: 200px;
+  padding: 20px;
+  height: 68px;
+  font-family: inherit;
+  font-style: normal;
+  font-size: 18px;
+  font-weight: 600;
+}
+
+.button:hover {
+  transform: scale(1.02);
+  box-shadow:
+    0 0 1px 2px rgba(255, 255, 255, 0.4),
+    0 15px 30px rgba(31, 109, 148, 0.22),
+    0 10px 3px -3px rgba(0, 0, 0, 0.04);
+}
+
+.button:active {
+  transform: scale(1);
+  box-shadow:
+    0 0 1px 2px rgba(255, 255, 255, 0.4),
+    0 10px 3px -3px rgba(0, 0, 0, 0.18);
+}
+
+/* 渐变描边：内浅外深，做出胶囊的立体边 */
+.button:after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  border: 2.5px solid transparent;
+  background:
+    linear-gradient(var(--neutral-1), var(--neutral-2)) padding-box,
+    linear-gradient(to bottom, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0.45)) border-box;
+  z-index: 0;
+  transition: all 0.4s ease;
+}
+
+.button:hover::after {
+  transform: scale(1.05, 1.1);
+  box-shadow: inset 0 -1px 3px 0 rgba(255, 255, 255, 1);
+}
+
+/* 浅色填充面，叠在描边之上，构成「浅蓝极简」的干净底 */
+.button::before {
+  content: "";
+  inset: 7px 6px 6px 6px;
+  position: absolute;
+  background: linear-gradient(to top, var(--neutral-1), var(--neutral-2));
+  border-radius: 30px;
+  filter: blur(0.5px);
+  z-index: 2;
+}
+
+.state p {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* 图标（纸飞机 / 勾）定位在文字左侧 */
+.state .icon {
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+  transform: scale(1.25);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.state .icon svg {
+  overflow: visible;
+}
+
+/* 悬停时旋转的一圈淡白描边 */
+.outline {
+  position: absolute;
+  border-radius: inherit;
+  overflow: hidden;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  inset: -2px -3.5px;
+}
+
+.outline::before {
+  content: "";
+  position: absolute;
+  inset: -100%;
+  background: conic-gradient(
+    from 180deg,
+    transparent 60%,
+    rgba(255, 255, 255, 0.9) 80%,
+    transparent 100%
+  );
+  animation: spin 2s linear infinite;
+  animation-play-state: paused;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.button:hover .outline {
+  opacity: 1;
+}
+
+.button:hover .outline::before {
+  animation-play-state: running;
+}
+
+/* 逐个字母的进出场，靠 --i 错开节奏 */
+.state p span {
+  display: block;
+  opacity: 0;
+  animation: slideDown 0.8s ease forwards calc(var(--i) * 0.03s);
+}
+
+.button:hover p span {
+  opacity: 1;
+  animation: wave 0.5s ease forwards calc(var(--i) * 0.02s);
+}
+
+.button:focus-visible p span {
+  opacity: 1;
+}
+
+@keyframes wave {
+  30% {
+    opacity: 1;
+    transform: translateY(4px) translateX(0) rotate(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-3px) translateX(0) rotate(0);
+    color: var(--primary);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) translateX(0) rotate(0);
+  }
+}
+
+@keyframes slideDown {
+  0% {
+    opacity: 0;
+    transform: translateY(-20px) translateX(5px) rotate(-90deg);
+    color: var(--primary);
+    filter: blur(5px);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(4px) translateX(0) rotate(0);
+    filter: blur(0);
+  }
+  50% {
+    opacity: 1;
+    transform: translateY(-3px) translateX(0) rotate(0);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) translateX(0) rotate(0);
+  }
+}
+
+@keyframes disapear {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(5px) translateY(20px);
+    color: var(--primary);
+    filter: blur(5px);
+  }
+}
+
+/* 纸飞机：加载时「降落」，悬停转向 45° */
+.stateDefault .icon svg {
+  animation: land 0.6s ease forwards;
+}
+
+.button:hover .stateDefault .icon {
+  transform: rotate(45deg) scale(1.25);
+}
+
+@keyframes land {
+  0% {
+    transform: translateX(-60px) translateY(30px) rotate(-50deg) scale(2);
+    opacity: 0;
+    filter: blur(3px);
+  }
+  100% {
+    transform: translateX(0) translateY(0) rotate(0);
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+/* 飞机尾迹 */
+.stateDefault .icon:before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  height: 2px;
+  width: 0;
+  left: -5px;
+  background: linear-gradient(to right, transparent, rgba(0, 0, 0, 0.5));
+}
+
+.button:focus .stateDefault .icon:before {
+  animation: contrail 0.8s linear forwards;
+}
+
+@keyframes contrail {
+  0% {
+    width: 0;
+    opacity: 1;
+  }
+  8% {
+    width: 15px;
+  }
+  60% {
+    opacity: 0.7;
+    width: 80px;
+  }
+  100% {
+    opacity: 0;
+    width: 160px;
+  }
+}
+
+/* 两个状态层：默认常显，已发送默认隐藏、聚焦时显示 */
+.state {
+  padding-left: 29px;
+  z-index: 2;
+  display: flex;
+  position: relative;
+}
+
+.stateDefault span:nth-child(4) {
+  margin-right: 5px;
+}
+
+.stateSent {
+  display: none;
+}
+
+.stateSent svg {
+  transform: scale(1.25);
+  margin-right: 8px;
+}
+
+.button[data-status='sent'] .stateDefault {
+  position: absolute;
+}
+
+.button[data-status='sent'] .stateSent {
+  display: flex;
+}
+
+.button[data-status='sent'] .stateSent span {
+  opacity: 0;
+  animation: slideDown 0.8s ease forwards calc(var(--i) * 0.2s);
+}
+
+.button[data-status='sent'] .stateSent .icon svg {
+  opacity: 0;
+  animation: appear 1.2s ease forwards 0.8s;
+}
+
+@keyframes appear {
+  0% {
+    opacity: 0;
+    transform: scale(4) rotate(-40deg);
+    color: var(--primary);
+    filter: blur(4px);
+  }
+  30% {
+    opacity: 1;
+    transform: scale(0.6);
+    filter: blur(1px);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2);
+    filter: blur(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* 键盘聚焦给一圈淡蓝描边，和全站一致 */
+.button:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* 发送中：禁用态，弱化 hover / 描边动效，避免晃动 */
+.button:disabled {
+  cursor: progress;
+  opacity: 0.78;
+}
+
+.button:disabled:hover {
+  transform: none;
+  box-shadow:
+    0 0.5px 0.5px 1px rgba(255, 255, 255, 0.5),
+    0 10px 20px rgba(31, 109, 148, 0.16),
+    0 4px 5px 0 rgba(0, 0, 0, 0.05);
+}
+
+@media (max-width: 520px) {
+  .button {
+    width: 100%;
+  }
+}
