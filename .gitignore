@@ -11,3 +11,7 @@ coverage
 # 部署用的临时压缩包（构建产物，不进仓库）
 finishing-netlify.zip
 dist_old_*
+
+# 课件 PPTX 源文件体积常超 100MB（GitHub 单文件上限），只在本地留着供重新导出；
+# 真正进仓库的是 assets-source/ppt/*.png 与 public/portfolio.pdf
+assets-source/ppt/deck.pptx

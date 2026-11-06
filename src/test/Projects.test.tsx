@@ -8,6 +8,8 @@ import { renderWithLang } from './testUtils'
 
 const first = projects[0]
 const last = projects[projects.length - 1]
+/** 页码随课件页数自动变化；换一套 PPT 时测试不用跟着改数字 */
+const total = String(projects.length).padStart(2, '0')
 
 function renderPage() {
   return renderWithLang(<Projects />)
@@ -86,9 +88,9 @@ describe('作品集轮播 — 一次只显示一页', () => {
     expect(screen.getByRole('img', { name: first.alt })).toBeInTheDocument()
   })
 
-  it('页码显示 01 / 15（补零，两位对两位）', () => {
+  it(`页码显示 01 / ${total}（补零，两位对两位）`, () => {
     renderCarousel()
-    expect(counter()).toHaveTextContent('01/15')
+    expect(counter()).toHaveTextContent(`01/${total}`)
   })
 
   it('图片下方显示这一页的中文图注', () => {
@@ -112,7 +114,7 @@ describe('作品集轮播 — 左右箭头翻页', () => {
     await user.click(nextButton())
 
     expect(slideImage()?.getAttribute('src')).toBe(projects[1].src)
-    expect(counter()).toHaveTextContent('02/15')
+    expect(counter()).toHaveTextContent(`02/${total}`)
     expect(screen.getByText(projects[1].caption)).toBeInTheDocument()
   })
 
@@ -124,7 +126,7 @@ describe('作品集轮播 — 左右箭头翻页', () => {
     await user.click(prevButton())
 
     expect(slideImage()?.getAttribute('src')).toBe(first.src)
-    expect(counter()).toHaveTextContent('01/15')
+    expect(counter()).toHaveTextContent(`01/${total}`)
   })
 
   it('第一页时左箭头不可用，最后一页时右箭头不可用', async () => {
@@ -140,7 +142,7 @@ describe('作品集轮播 — 左右箭头翻页', () => {
     }
 
     expect(slideImage()?.getAttribute('src')).toBe(last.src)
-    expect(counter()).toHaveTextContent(`15/${projects.length}`)
+    expect(counter()).toHaveTextContent(`${total}/${total}`)
     expect(nextButton()).toBeDisabled()
     expect(prevButton()).toBeEnabled()
   })
@@ -150,10 +152,10 @@ describe('作品集轮播 — 左右箭头翻页', () => {
     renderCarousel()
 
     await user.keyboard('{ArrowRight}')
-    expect(counter()).toHaveTextContent('02/15')
+    expect(counter()).toHaveTextContent(`02/${total}`)
 
     await user.keyboard('{ArrowLeft}')
-    expect(counter()).toHaveTextContent('01/15')
+    expect(counter()).toHaveTextContent(`01/${total}`)
   })
 
   it('在第一页按左方向键不会越界', async () => {
@@ -162,7 +164,7 @@ describe('作品集轮播 — 左右箭头翻页', () => {
 
     await user.keyboard('{ArrowLeft}')
 
-    expect(counter()).toHaveTextContent('01/15')
+    expect(counter()).toHaveTextContent(`01/${total}`)
     expect(prevButton()).toBeDisabled()
   })
 })

@@ -11,7 +11,7 @@
 
 其余全部收录，包括：
     .git/            完整提交历史（含未提交改动的工作区，见下面的说明）
-    assets-source/   98M 原始素材（含 deck.pptx 50M 与幻灯片 PNG）
+    assets-source/   原始素材（课件页 PNG 在 ppt/，证书原图在 projects/）
     public/          24M 站点静态资源
     previews/        归档的预览截图
 
@@ -59,7 +59,7 @@ README = """finishing — 项目备份
 ----------------
 - 完整源码（src/）、脚本（scripts/）、配置
 - .git/            提交历史
-- assets-source/   原始素材，含 deck.pptx（50M 作品集原稿）与幻灯片 PNG
+- assets-source/   原始素材，含 ppt/ 下的课件页 PNG 与 projects/ 下的证书原图
 - public/          站点静态资源（照片、日记图、简历 PDF）
 - previews/        归档的预览截图，含各文件的说明
 - docs/            设计与实现文档
@@ -69,9 +69,9 @@ README = """finishing — 项目备份
 
 关于 deck.pptx
 --------------
-它的位置是 assets-source/projects/deck.pptx，**故意留在** assets-source 里作为
-原稿备份。它不在 public/ 下，所以不会被 npm run build 拷进 dist/，
-也就不会出现在最终上线的网站里。这是刻意的，不是漏了。
+PPTX 原稿体积常超 100MB（GitHub 单文件上限），新原稿请放 assets-source/ppt/deck.pptx，
+已在 .gitignore 中排除；旧版原稿仍留在 assets-source/projects/deck.pptx 作为历史备份。
+真正提交的是 assets-source/ppt/*.png 课件页与 public/portfolio.pdf。
 
 注意
 ----

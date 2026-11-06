@@ -1,7 +1,7 @@
 ﻿<#
 把 PPTX 导出成「网页要用的两样东西」：
 
-  1. 逐页高清 PNG  -> assets-source/projects/   （后面由 projects:build 压成网页尺寸）
+  1. 逐页高清 PNG  -> assets-source/ppt/         （后面由 projects:build 压成网页尺寸）
   2. 一份 PDF      -> public/portfolio.pdf      （页面上「下载完整 PDF」指向它）
 
 为什么用 PowerPoint 而不是 LibreOffice / python-pptx：
@@ -14,20 +14,22 @@
 
 也可以直接调用：
   powershell -NoProfile -ExecutionPolicy Bypass -File scripts/export-pptx.ps1 `
-      -Source assets-source/projects/deck.pptx `
+      -Source assets-source/ppt/deck.pptx `
       -Pdf    public/portfolio.pdf `
-      -OutDir assets-source/projects
+      -OutDir assets-source/ppt
 
 注意：
   * 脚本内容全为 ASCII。Windows PowerShell 5.1 在无 BOM 时按 ANSI 读 .ps1，
     文件里一旦出现中文就会被读成乱码，所以注释也一并写成英文以外的风险一律避开。
   * 路径由参数传入，默认值都是 ASCII 相对路径，因此不依赖终端编码。
+  * deck.pptx 是本地源文件（体积常超 100MB，GitHub 拒收），已在 .gitignore 中排除；
+    课件页 PNG / PDF 才是提交进仓库的产物。没有 PPTX 也可以直接用 PDF 渲染课件页。
 #>
 [CmdletBinding()]
 param(
-    [string]$Source = 'assets-source/projects/deck.pptx',
+    [string]$Source = 'assets-source/ppt/deck.pptx',
     [string]$Pdf    = 'public/portfolio.pdf',
-    [string]$OutDir = 'assets-source/projects',
+    [string]$OutDir = 'assets-source/ppt',
     [int]$Width  = 3200,
     [int]$Height = 1800
 )

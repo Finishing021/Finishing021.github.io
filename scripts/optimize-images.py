@@ -118,7 +118,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--no-date-warning", action="store_true",
                         help="不提示「日期靠 mtime 兜底」。课件截图没有 EXIF，这个提示只是噪音")
     parser.add_argument("--exclude-prefix", action="append", default=[], metavar="PREFIX",
-                        help="跳过以该前缀命名的源图，可重复传。作品集用它排除 cert_ 证书原图")
+                        help="跳过以该前缀命名的源图，可重复传（同目录混放多类素材时用）")
     return parser
 
 
@@ -128,9 +128,10 @@ def collect(directory: Path, exclude_prefixes: tuple[str, ...] = ()) -> list[Pat
     """收集目录下的图片。跳过隐藏文件、_ 开头的中间产物、缩略图产物本身，
     以及调用方显式排除的前缀。
 
-    `exclude_prefixes` 给作品集用：assets-source/projects/ 里同时放着课件截图
-    和证书原图，但只有 slide-* 该进课件清单。证书单独由 projectsData.ts 引用，
-    若被这里收进来，重跑 projects:build 会把证书混成课件页。
+    `exclude_prefixes` 用来排除同目录下「不该进清单」的素材。例如源目录里
+    同时放着课件页和证书原图时，证书由 projectsData.ts 单独引用；若不排除，
+    重跑 projects:build 会把证书混成课件页。现在课件页单独放在 assets-source/ppt/，
+    该目录里没有证书，默认无需排除。
     """
     if not directory.is_dir():
         return []

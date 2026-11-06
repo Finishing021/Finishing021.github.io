@@ -156,7 +156,7 @@ export function ProjectsEmpty() {
       <p className={styles.emptyTitle}>{t.emptyTitle}</p>
       <p className={styles.emptyHint}>
         {t.emptyHintPre}
-        <code>assets-source/projects/</code>
+        <code>assets-source/ppt/</code>
         {t.emptyHintMid}
         <code>npm run projects:build</code>
       </p>

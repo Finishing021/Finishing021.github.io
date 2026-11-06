@@ -17,7 +17,7 @@
     "photos:check": "python scripts/test-optimize-images.py && node scripts/check-photos.mjs",
     "photos:selftest": "python scripts/test-optimize-images.py",
     "projects:export": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/export-pptx.ps1",
-    "projects:build": "python scripts/optimize-images.py assets-source/projects public/projects --max-edge 2560 --thumb --thumb-edge 720 --quality 84 --exclude-prefix cert_ --manifest src/content/projects.generated.ts --manifest-export projects --manifest-type Project --manifest-command \"npm run projects:build\" --manifest-order asc --no-date-warning --format webp",
+    "projects:build": "python scripts/optimize-images.py assets-source/ppt public/projects --max-edge 2560 --thumb --thumb-edge 720 --quality 84 --manifest src/content/projects.generated.ts --manifest-export projects --manifest-type Project --manifest-command \"npm run projects:build\" --manifest-order asc --no-date-warning --format webp",
     "projects:all": "npm run projects:export && npm run projects:build",
     "backdrop": "python scripts/make-hero-backdrop.py",
     "shot": "node scripts/shoot.mjs"

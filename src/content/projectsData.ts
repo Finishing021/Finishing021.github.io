@@ -11,7 +11,7 @@ import { projectCaptionEn } from './enText'
  *
  * - `kind: 'carousel'` → 一屏一页的幻灯片轮播（左右切换），适合有顺序的成套内容
  *   （如 PPT 课件）。图片直接复用 `projects.generated.ts` 生成清单 ——
- *   想加新页：把图放进 assets-source/projects/ 再跑 `npm run projects:build`，
+ *   想加新页：把图放进 assets-source/ppt/ 再跑 `npm run projects:build`，
  *   轮播页数自动扩充，本文件一行都不用改。
  * - `kind: 'gallery'` → 白色相框卡片网格，适合并列的成件内容（如证书）。
  *   想加新证书：往 images 里再加一条即可。
@@ -79,7 +79,7 @@ export const projectModules: ProjectModule[] = [
       }
     }),
     // 「下载完整 PDF」按钮挂在课件模块底部、轮播正下方（不再挤在页面顶部）
-    download: { href: portfolioUrl, fileName: 'AI已来-思政课课件.pdf' },
+    download: { href: portfolioUrl, fileName: '科技创新思政课课件-2026.pdf' },
   },
   {
     id: 'ai-certificates',

@@ -198,7 +198,7 @@ export const resumeUrl = '/resume.pdf'
 
 /**
  * 作品集的完整 PDF。
- * 由 `npm run projects:export` 从 assets-source/projects/deck.pptx 导出，
- * 落在 public/portfolio.pdf；页面上「下载完整 PDF」按钮指向它。
+ * 由 `npm run projects:export` 从 assets-source/ppt/deck.pptx 导出，或直接放一份
+ * 最新版导出的 PDF；落在 public/portfolio.pdf；页面上「下载完整 PDF」按钮指向它。
  */
 export const portfolioUrl = '/portfolio.pdf'
