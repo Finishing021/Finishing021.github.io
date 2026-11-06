@@ -117,13 +117,21 @@ def build_parser() -> argparse.ArgumentParser:
                         help="清单排序。照片按日期倒序（新在前）；课件这类有序内容用 asc（第 1 页在前）")
     parser.add_argument("--no-date-warning", action="store_true",
                         help="不提示「日期靠 mtime 兜底」。课件截图没有 EXIF，这个提示只是噪音")
+    parser.add_argument("--exclude-prefix", action="append", default=[], metavar="PREFIX",
+                        help="跳过以该前缀命名的源图，可重复传。作品集用它排除 cert_ 证书原图")
     return parser
 
 
 # ---------------------------------------------------------------- 采集
 
-def collect(directory: Path) -> list[Path]:
-    """收集目录下的图片。跳过隐藏文件、_ 开头的中间产物、以及缩略图产物本身。"""
+def collect(directory: Path, exclude_prefixes: tuple[str, ...] = ()) -> list[Path]:
+    """收集目录下的图片。跳过隐藏文件、_ 开头的中间产物、缩略图产物本身，
+    以及调用方显式排除的前缀。
+
+    `exclude_prefixes` 给作品集用：assets-source/projects/ 里同时放着课件截图
+    和证书原图，但只有 slide-* 该进课件清单。证书单独由 projectsData.ts 引用，
+    若被这里收进来，重跑 projects:build 会把证书混成课件页。
+    """
     if not directory.is_dir():
         return []
     return sorted(
@@ -132,6 +140,7 @@ def collect(directory: Path) -> list[Path]:
         if path.is_file()
         and path.suffix.lower() in IMAGE_SUFFIXES
         and not path.stem.startswith((".", "_"))
+        and not path.stem.startswith(exclude_prefixes)
         and not path.stem.endswith(THUMB_SUFFIX)
     )
 
@@ -468,7 +477,7 @@ def main() -> int:
     if not target_dir.is_absolute():
         target_dir = ROOT / target_dir
 
-    files = collect(source_dir)
+    files = collect(source_dir, tuple(args.exclude_prefix))
 
     if not files:
         # 要生成清单时，空源目录是一个合法状态（站主清空了所有照片），

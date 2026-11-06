@@ -85,8 +85,10 @@ export const projectModules: ProjectModule[] = [
     id: 'ai-certificates',
     kind: 'carousel',
     title: { zh: 'AI 认证', en: 'AI Certificates' },
-    // 完全复用 PPT 轮播：一次只显示一张证书，左右箭头切换，下方页码 01 / 05
-    // 新增的 3 张阿里云认证排在原有 2 张之后；点击任意一张都会打开共用灯箱放大。
+    // 完全复用 PPT 轮播：一次只显示一张证书，左右箭头切换，页码按数组长度自动生成
+    // 顺序：达摩院 2 张 → 阿里云 3 张 → 科大讯飞 2 张；点击任意一张都会打开共用灯箱放大。
+    // 新增证书：源图放 assets-source/projects/cert_*.jpg，压缩后的 WebP 放 public/certificates/，
+    // 再在下面追加一条（caption / alt 中英各一份）即可，组件代码不用动。
     images: [
       {
         src: '/certificates/ait-junior.webp',
@@ -137,6 +139,26 @@ export const projectModules: ProjectModule[] = [
           'Alibaba Cloud Apsara Clouder certification: VISION AI Design (Introductory), Guo Yong, certificate ID CLDM06261002786652, valid until 18 October 2028',
         caption: 'VISION 人工智能设计（入门）· 2028',
         captionEn: 'VISION AI Design (Introductory) · 2028',
+      },
+      {
+        src: '/certificates/cert_prompt.webp',
+        thumb: '/certificates/cert_prompt.webp',
+        aspect: 1600 / 1123,
+        alt: '科大讯飞 AI 大学堂认证：Prompt 工程师认证，郭勇，证书编号 XFPROMPT540939，2028 年 10 月 20 日到期',
+        altEn:
+          'iFLYTEK AI Academy certification: Prompt Engineer, Guo Yong, certificate ID XFPROMPT540939, valid until 20 October 2028',
+        caption: 'Prompt 工程师认证 · 2028',
+        captionEn: 'Prompt Engineer Certification · 2028',
+      },
+      {
+        src: '/certificates/cert_agent.webp',
+        thumb: '/certificates/cert_agent.webp',
+        aspect: 1600 / 1123,
+        alt: '科大讯飞 AI 大学堂认证：智能体工程师认证，郭勇，证书编号 XFAGENT677950，2028 年 10 月 20 日到期',
+        altEn:
+          'iFLYTEK AI Academy certification: Agent Engineer, Guo Yong, certificate ID XFAGENT677950, valid until 20 October 2028',
+        caption: '智能体工程师认证 · 2028',
+        captionEn: 'Agent Engineer Certification · 2028',
       },
     ],
   },
