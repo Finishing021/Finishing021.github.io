@@ -109,7 +109,9 @@
   z-index: 1;
   opacity: 0;
   transition: opacity 0.4s ease;
-  inset: -2px -3.5px;
+  /* 左右不再用负 inset：那会让装饰层撑出按钮约 4px 的横向溢出（英文态尤其明显）。
+     只保留上下各 2px 的外扩，旋转描边依旧贴合按钮轮廓。 */
+  inset: -2px 0;
 }
 
 .outline::before {

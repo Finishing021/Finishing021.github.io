@@ -213,3 +213,35 @@
     height: 16px;
   }
 }
+
+/*
+ * 320px 级极窄屏：右侧的语言开关与音乐按钮会被挤到视口外（实测音乐按钮
+ * left=330 > 320），而文档本身不产生横向滚动条 —— 用户既看不见也点不到。
+ * 让字标在极窄屏暂时让位、再收紧间距，把 7 个控件全部收回可视区。
+ * 360px 及以上保持原样，不影响常规手机布局。
+ */
+@media (max-width: 340px) {
+  .brand {
+    display: none;
+  }
+
+  .inner {
+    padding: 0 12px;
+    gap: 8px;
+  }
+
+  .links {
+    width: 100%;
+    justify-content: space-between;
+    gap: 4px;
+  }
+
+  .link {
+    padding: 7px;
+  }
+
+  .icon {
+    width: 15px;
+    height: 15px;
+  }
+}
